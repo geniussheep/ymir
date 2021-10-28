@@ -2,6 +2,7 @@ package db
 
 import (
 	"errors"
+	"gitlab.benlai.work/go/dbms"
 	"log"
 	"os"
 	"time"
@@ -29,13 +30,22 @@ type Repository interface {
 }
 
 type repository struct {
-	connStr string
-	driver  Driver
-	db      *gorm.DB
+	dsn    string
+	driver Driver
+	db     *gorm.DB
+}
+
+func NewWithDbms(connStr string) (Repository, error) {
+	dbms := dbms.NewClient()
+	driver, dsn, err := dbms.GetConnectionString(connStr)
+	if err != nil {
+		return nil, err
+	}
+	return New(dsn, Driver(driver))
 }
 
 // NewRepository func
-func NewRepository(connStr string, driver Driver) (Repository, error) {
+func New(dsn string, driver Driver) (Repository, error) {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
@@ -46,20 +56,20 @@ func NewRepository(connStr string, driver Driver) (Repository, error) {
 		},
 	)
 	r := &repository{
-		connStr: connStr,
-		driver:  driver,
-		db:      nil,
+		dsn:    dsn,
+		driver: driver,
+		db:     nil,
 	}
 	switch r.driver {
 	case MYSQL:
-		db, err := gorm.Open(mysql.Open(r.connStr), &gorm.Config{Logger: newLogger})
+		db, err := gorm.Open(mysql.Open(r.dsn), &gorm.Config{Logger: newLogger})
 		if err != nil {
 			return nil, err
 		}
 		r.db = db
 		break
 	case MSSQL:
-		db, err := gorm.Open(sqlserver.Open(r.connStr), &gorm.Config{Logger: newLogger})
+		db, err := gorm.Open(sqlserver.Open(r.dsn), &gorm.Config{Logger: newLogger})
 		if err != nil {
 			return nil, err
 		}

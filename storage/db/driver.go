@@ -1,8 +1,8 @@
 package db
 
-type Driver int32
+type Driver string
 
 const (
-	MYSQL Driver = 1
-	MSSQL Driver = 2
+	MYSQL Driver = "mysql"
+	MSSQL Driver = "sqlserver"
 )

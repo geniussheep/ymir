@@ -34,4 +34,5 @@ require (
 	gorm.io/driver/sqlserver v1.1.2
 	gorm.io/gorm v1.22.0
 	gorm.io/plugin/dbresolver v1.1.0
+	gitlab.benlai.work/go/dbms v1.0.0
 )
