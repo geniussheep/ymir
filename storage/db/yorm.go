@@ -14,8 +14,8 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-// Repository interface
-type Repository interface {
+// Yorm interface
+type Yorm interface {
 	Init(models ...interface{}) error
 	FindOne(id int64, model interface{}) error
 	First(model interface{})
@@ -29,13 +29,13 @@ type Repository interface {
 	Db() *gorm.DB
 }
 
-type repository struct {
+type yorm struct {
 	dsn    string
 	driver Driver
 	db     *gorm.DB
 }
 
-func NewWithDbms(connStr string) (Repository, error) {
+func NewWithDbms(connStr string) (Yorm, error) {
 	dbms := dbms.NewClient()
 	driver, dsn, err := dbms.GetConnectionString(connStr)
 	if err != nil {
@@ -44,8 +44,8 @@ func NewWithDbms(connStr string) (Repository, error) {
 	return New(dsn, Driver(driver))
 }
 
-// NewRepository func
-func New(dsn string, driver Driver) (Repository, error) {
+// NewYorm func
+func New(dsn string, driver Driver) (Yorm, error) {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
@@ -55,7 +55,7 @@ func New(dsn string, driver Driver) (Repository, error) {
 			Colorful:                  false,         // Disable color
 		},
 	)
-	r := &repository{
+	r := &yorm{
 		dsn:    dsn,
 		driver: driver,
 		db:     nil,
@@ -81,7 +81,7 @@ func New(dsn string, driver Driver) (Repository, error) {
 
 }
 
-func (r *repository) Init(models ...interface{}) error {
+func (r *yorm) Init(models ...interface{}) error {
 	if models == nil || len(models) == 0 {
 		return errors.New("model is missing")
 	}
@@ -93,7 +93,7 @@ func (r *repository) Init(models ...interface{}) error {
 	return nil
 }
 
-func (r *repository) FindOne(id int64, model interface{}) error {
+func (r *yorm) FindOne(id int64, model interface{}) error {
 	if id <= 0 {
 		return errors.New("id is invalid")
 	}
@@ -103,15 +103,15 @@ func (r *repository) FindOne(id int64, model interface{}) error {
 	return nil
 }
 
-func (r *repository) First(model interface{}) {
+func (r *yorm) First(model interface{}) {
 	r.db.First(model)
 }
 
-func (r *repository) Last(model interface{}) {
+func (r *yorm) Last(model interface{}) {
 	r.db.Last(model)
 }
 
-func (r *repository) FindAll(models interface{}) error {
+func (r *yorm) FindAll(models interface{}) error {
 
 	if err := r.db.Find(models).Error; err != nil {
 		return err
@@ -120,7 +120,7 @@ func (r *repository) FindAll(models interface{}) error {
 	return nil
 }
 
-func (r *repository) FindByQuery(where interface{}, models interface{}) error {
+func (r *yorm) FindByQuery(where interface{}, models interface{}) error {
 
 	db, err := BuildWhere(r.db, where)
 	if err != nil {
@@ -134,7 +134,7 @@ func (r *repository) FindByQuery(where interface{}, models interface{}) error {
 	return nil
 }
 
-func (r *repository) FindByQueryForPage(where interface{}, columns interface{}, orderBy interface{}, page, rows int, models interface{}) error {
+func (r *yorm) FindByQueryForPage(where interface{}, columns interface{}, orderBy interface{}, page, rows int, models interface{}) error {
 
 	db, err := BuildWhereForPage(r.db, where, columns, orderBy, page, rows)
 	if err != nil {
@@ -148,7 +148,7 @@ func (r *repository) FindByQueryForPage(where interface{}, columns interface{}, 
 	return nil
 }
 
-func (r *repository) Create(model interface{}) error {
+func (r *yorm) Create(model interface{}) error {
 	if model == nil {
 		return errors.New("model is missing")
 	}
@@ -160,7 +160,7 @@ func (r *repository) Create(model interface{}) error {
 	return nil
 }
 
-func (r *repository) Update(model interface{}) error {
+func (r *yorm) Update(model interface{}) error {
 	if model == nil {
 		return errors.New("model is missing")
 	}
@@ -172,7 +172,7 @@ func (r *repository) Update(model interface{}) error {
 	return nil
 }
 
-func (r *repository) Delete(model interface{}) error {
+func (r *yorm) Delete(model interface{}) error {
 
 	if err := r.db.Delete(model).Error; err != nil {
 		return err
@@ -181,6 +181,6 @@ func (r *repository) Delete(model interface{}) error {
 	return nil
 }
 
-func (r *repository) Db() *gorm.DB {
+func (r *yorm) Db() *gorm.DB {
 	return r.db
 }

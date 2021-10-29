@@ -20,6 +20,10 @@ import (
 	"github.com/shamsher31/goimgext"
 )
 
+func PathCreate(dir string) error {
+	return os.MkdirAll(dir, os.ModePerm)
+}
+
 // PathExist 判断目录是否存在
 func PathExist(addr string) bool {
 	s, err := os.Stat(addr)
