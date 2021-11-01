@@ -31,11 +31,11 @@ type Config interface {
 	SetEnvPrefix(envPrefix string)
 	AllowEmptyEnvVar(b bool)
 
-	Unmarshal(rawVal interface{})
+	Unmarshal(rawVal interface{}) error
 }
 
 var (
-	Cfg Config
+	cfg Config
 )
 
 func New(configPath string) Config {
@@ -43,11 +43,11 @@ func New(configPath string) Config {
 }
 
 func Get(key string) interface{} {
-	return Cfg.Get(key)
+	return cfg.Get(key)
 }
 
 func GetBool(key string) bool {
-	return Cfg.GetBool(key)
+	return cfg.GetBool(key)
 }
 
 func GetFloat64(key string) float64 {
@@ -55,62 +55,62 @@ func GetFloat64(key string) float64 {
 }
 
 func GetInt(key string) int {
-	return Cfg.GetInt(key)
+	return cfg.GetInt(key)
 }
 
 func GetString(key string) string {
-	return Cfg.GetString(key)
+	return cfg.GetString(key)
 }
 
 func GetStringMap(key string) map[string]interface{} {
-	return Cfg.GetStringMap(key)
+	return cfg.GetStringMap(key)
 }
 func GetStringMapString(key string) map[string]string {
-	return Cfg.GetStringMapString(key)
+	return cfg.GetStringMapString(key)
 }
 func GetStringSlice(key string) []string {
-	return Cfg.GetStringSlice(key)
+	return cfg.GetStringSlice(key)
 }
 func GetTime(key string) time.Time {
-	return Cfg.GetTime(key)
+	return cfg.GetTime(key)
 }
 
 func GetDuration(key string) time.Duration {
-	return Cfg.GetDuration(key)
+	return cfg.GetDuration(key)
 }
 
 func IsSet(key string) bool {
-	return Cfg.IsSet(key)
+	return cfg.IsSet(key)
 }
 
 func AllSettings() map[string]interface{} {
-	return Cfg.AllSettings()
+	return cfg.AllSettings()
 }
 
 func Set(key string, value interface{}) {
-	Cfg.Set(key, value)
+	cfg.Set(key, value)
 }
 
 func RegisterAlias(alias string, key string) {
-	Cfg.RegisterAlias(alias, key)
+	cfg.RegisterAlias(alias, key)
 }
 
 func AutomaticEnv() {
-	Cfg.AutomaticEnv()
+	cfg.AutomaticEnv()
 }
 
 func BindEnv(input string) error {
-	return Cfg.BindEnv(input)
+	return cfg.BindEnv(input)
 }
 
 func SetEnvPrefix(envPrefix string) {
-	Cfg.SetEnvPrefix(envPrefix)
+	cfg.SetEnvPrefix(envPrefix)
 }
 
 func AllowEmptyEnvVar(b bool) {
-	Cfg.AllowEmptyEnvVar(b)
+	cfg.AllowEmptyEnvVar(b)
 }
 
-func Unmarshal(rawVal interface{}) {
-	Cfg.Unmarshal(rawVal)
+func Unmarshal(rawVal interface{}) error {
+	return cfg.Unmarshal(rawVal)
 }

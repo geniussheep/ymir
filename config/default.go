@@ -25,6 +25,7 @@ type config struct {
 func initConfig(configPath string) Config {
 	c := config{instance: viper.New()}
 	c.instance.SetConfigFile(configPath)
+	c.instance.ReadInConfig()
 	return &c
 }
 
@@ -90,6 +91,6 @@ func (c *config) AllowEmptyEnvVar(b bool) {
 	c.instance.AllowEmptyEnv(b)
 }
 
-func (c *config) Unmarshal(rawVal interface{}) {
-	c.instance.Unmarshal(rawVal)
+func (c *config) Unmarshal(rawVal interface{}) error {
+	return c.instance.Unmarshal(rawVal)
 }

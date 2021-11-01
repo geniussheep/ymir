@@ -3,12 +3,11 @@ package config
 import "gitlab.benlai.work/go/ymir/sdk/pkg/logger"
 
 type Logger struct {
-	Type      string `yaml:"type"`
-	Path      string `yaml:"path"`
-	Level     string `yaml:"level"`
-	Stdout    string `yaml:"stdout"`
-	EnabledDB bool   `yaml:"enabledDB"`
-	Cap       uint   `yaml:"cap"`
+	Type   string `yaml:"type"`
+	Path   string `yaml:"path"`
+	Level  string `yaml:"level"`
+	Stdout string `yaml:"stdout"`
+	Cap    uint   `yaml:"cap"`
 }
 
 // Setup 设置logger

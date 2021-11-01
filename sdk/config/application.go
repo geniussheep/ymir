@@ -1,8 +1,8 @@
 package config
 
 type Application struct {
-	AppId    int32  `yaml:"appId"`
-	AppKey   string `yaml:"appKey"`
-	AppName  string `yaml:"appName"`
-	HttpPort int64  `yaml:"httpPort"`
+	AppId    int32  `yaml:"appid"`
+	AppKey   string `yaml:"appkey"`
+	AppName  string `yaml:"appname"`
+	HttpPort int64  `yaml:"httpport"`
 }

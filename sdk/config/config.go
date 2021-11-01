@@ -2,12 +2,15 @@ package config
 
 import (
 	"gitlab.benlai.work/go/ymir/config"
+	"gitlab.benlai.work/go/ymir/logger"
+	"os"
+	"path/filepath"
 	"sync"
 )
 
 var (
-	cfg *Config
-	once   sync.Once
+	cfg  *Config
+	once sync.Once
 )
 
 // Config 配置集合
@@ -26,11 +29,22 @@ func Current() Config {
 }
 
 func Default() *Config {
-	return Setup("./conf/config.yaml")
+	_cfg, err := Setup("conf/config.yaml")
+	if err != nil {
+		logger.DefaultLogger.Logf(logger.ErrorLevel, "load config failed, error: %s", err)
+		os.Exit(1)
+	}
+	return _cfg
 }
 
-func Setup(configPath string) *Config {
+func Setup(configPath string) (*Config, error) {
+	currentPath, _ := os.Getwd()
+	configPath = filepath.Join(currentPath, configPath)
+	logger.DefaultLogger.Logf(logger.InfoLevel, "will load config: %s", configPath)
 	c := config.New(configPath)
-	c.Unmarshal(cfg)
-	return cfg
+	err := c.Unmarshal(&cfg)
+	if err != nil {
+		return nil, err
+	}
+	return cfg, nil
 }
