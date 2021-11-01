@@ -1,7 +1,6 @@
 package config
 
 import (
-	"github.com/spf13/viper"
 	"time"
 )
 
@@ -30,90 +29,88 @@ type Config interface {
 	AutomaticEnv()
 	BindEnv(input string) error
 	SetEnvPrefix(envPrefix string)
-	AllowEmptyEnvVar(bool)
+	AllowEmptyEnvVar(b bool)
 
 	Unmarshal(rawVal interface{})
 }
 
-type config struct {
-	instance *viper.Viper
+var (
+	Cfg Config
+)
+
+func New(configPath string) Config {
+	return initConfig(configPath)
 }
 
-//func (c *config) Init(path string, configName string, configType string) {
-//	c.instance = viper.New()
-//	c.instance.AddConfigPath(path)
-//	c.instance.SetConfigName(configName)
-//	c.instance.SetConfigType(configType)
-//}
-//
-//func (c *config) AddConfigPath(path ...string) {
-//	for _, p := range path {
-//		c.instance.AddConfigPath(p)
-//	}
-//}
-
-func (c *config) Init(configPath string) {
-	c.instance = viper.New()
-	c.instance.SetConfigFile(configPath)
+func Get(key string) interface{} {
+	return Cfg.Get(key)
 }
 
-func (c *config) Get(key string) interface{} {
-	return c.instance.Get(key)
-}
-func (c *config) GetBool(key string) bool {
-	return c.instance.GetBool(key)
-}
-func (c *config) GetFloat64(key string) float64 {
-	return c.instance.GetFloat64(key)
-}
-func (c *config) GetInt(key string) int {
-	return c.instance.GetInt(key)
-}
-func (c *config) GetString(key string) string {
-	return c.instance.GetString(key)
-}
-func (c *config) GetStringMap(key string) map[string]interface{} {
-	return c.instance.GetStringMap(key)
-}
-func (c *config) GetStringMapString(key string) map[string]string {
-	return c.instance.GetStringMapString(key)
-}
-func (c *config) GetStringSlice(key string) []string {
-	return c.instance.GetStringSlice(key)
-}
-func (c *config) GetTime(key string) time.Time {
-	return c.instance.GetTime(key)
-}
-func (c *config) GetDuration(key string) time.Duration {
-	return c.instance.GetDuration(key)
-}
-func (c *config) IsSet(key string) bool {
-	return c.instance.IsSet(key)
-}
-func (c *config) AllSettings() map[string]interface{} {
-	return c.instance.AllSettings()
+func GetBool(key string) bool {
+	return Cfg.GetBool(key)
 }
 
-func (c *config) Set(key string, value interface{}) {
-	c.instance.Set(key, value)
-}
-func (c *config) RegisterAlias(alias string, key string) {
-	c.instance.RegisterAlias(alias, key)
+func GetFloat64(key string) float64 {
+	return GetFloat64(key)
 }
 
-func (c *config) AutomaticEnv() {
-	c.instance.AutomaticEnv()
-}
-func (c *config) BindEnv(input string) error {
-	return c.instance.BindEnv(input)
-}
-func (c *config) SetEnvPrefix(envPrefix string) {
-	c.instance.SetEnvPrefix(envPrefix)
-}
-func (c *config) AllowEmptyEnvVar(b bool) {
-	c.instance.AllowEmptyEnv(b)
+func GetInt(key string) int {
+	return Cfg.GetInt(key)
 }
 
-func (c *config) Unmarshal(rawVal interface{}) {
-	c.instance.Unmarshal(rawVal)
+func GetString(key string) string {
+	return Cfg.GetString(key)
+}
+
+func GetStringMap(key string) map[string]interface{} {
+	return Cfg.GetStringMap(key)
+}
+func GetStringMapString(key string) map[string]string {
+	return Cfg.GetStringMapString(key)
+}
+func GetStringSlice(key string) []string {
+	return Cfg.GetStringSlice(key)
+}
+func GetTime(key string) time.Time {
+	return Cfg.GetTime(key)
+}
+
+func GetDuration(key string) time.Duration {
+	return Cfg.GetDuration(key)
+}
+
+func IsSet(key string) bool {
+	return Cfg.IsSet(key)
+}
+
+func AllSettings() map[string]interface{} {
+	return Cfg.AllSettings()
+}
+
+func Set(key string, value interface{}) {
+	Cfg.Set(key, value)
+}
+
+func RegisterAlias(alias string, key string) {
+	Cfg.RegisterAlias(alias, key)
+}
+
+func AutomaticEnv() {
+	Cfg.AutomaticEnv()
+}
+
+func BindEnv(input string) error {
+	return Cfg.BindEnv(input)
+}
+
+func SetEnvPrefix(envPrefix string) {
+	Cfg.SetEnvPrefix(envPrefix)
+}
+
+func AllowEmptyEnvVar(b bool) {
+	Cfg.AllowEmptyEnvVar(b)
+}
+
+func Unmarshal(rawVal interface{}) {
+	Cfg.Unmarshal(rawVal)
 }
