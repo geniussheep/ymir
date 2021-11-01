@@ -44,6 +44,12 @@ func (c *config) Init(path string, configName string, configType string) {
 	c.instance.SetConfigType(configType)
 }
 
+func (c *config) AddConfigPath(path ...string) {
+	for _, p := range path {
+		c.instance.AddConfigPath(p)
+	}
+}
+
 func (c *config) Get(key string) interface{} {
 	return c.instance.Get(key)
 }
