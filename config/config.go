@@ -6,8 +6,10 @@ import (
 )
 
 type Config interface {
-	Init(path string, configName string, configType string)
-	AddConfigPath(path ...string)
+	//Init(path string, configName string, configType string)
+	//AddConfigPath(path ...string)
+
+	Init(configPath string)
 
 	Get(key string) interface{}
 	GetBool(key string) bool
@@ -37,17 +39,22 @@ type config struct {
 	instance *viper.Viper
 }
 
-func (c *config) Init(path string, configName string, configType string) {
-	c.instance = viper.New()
-	c.instance.AddConfigPath(path)
-	c.instance.SetConfigName(configName)
-	c.instance.SetConfigType(configType)
-}
+//func (c *config) Init(path string, configName string, configType string) {
+//	c.instance = viper.New()
+//	c.instance.AddConfigPath(path)
+//	c.instance.SetConfigName(configName)
+//	c.instance.SetConfigType(configType)
+//}
+//
+//func (c *config) AddConfigPath(path ...string) {
+//	for _, p := range path {
+//		c.instance.AddConfigPath(p)
+//	}
+//}
 
-func (c *config) AddConfigPath(path ...string) {
-	for _, p := range path {
-		c.instance.AddConfigPath(p)
-	}
+func (c *config) Init(configPath string) {
+	c.instance = viper.New()
+	c.instance.SetConfigFile(configPath)
 }
 
 func (c *config) Get(key string) interface{} {
