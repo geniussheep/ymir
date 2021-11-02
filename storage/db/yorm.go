@@ -15,7 +15,7 @@ import (
 )
 
 // Yorm interface
-type Yorm interface {
+type Orm interface {
 	Init(models ...interface{}) error
 	FindOne(id int64, model interface{}) error
 	First(model interface{})
@@ -29,13 +29,13 @@ type Yorm interface {
 	Db() *gorm.DB
 }
 
-type yorm struct {
+type Yorm struct {
 	dsn    string
 	driver Driver
 	db     *gorm.DB
 }
 
-func NewWithDbms(connStr string) (Yorm, error) {
+func NewWithDbms(connStr string) (Orm, error) {
 	dbms := dbms.NewClient()
 	driver, dsn, err := dbms.GetConnectionString(connStr)
 	if err != nil {
@@ -45,7 +45,7 @@ func NewWithDbms(connStr string) (Yorm, error) {
 }
 
 // NewYorm func
-func New(dsn string, driver Driver) (Yorm, error) {
+func New(dsn string, driver Driver) (Orm, error) {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
@@ -55,7 +55,7 @@ func New(dsn string, driver Driver) (Yorm, error) {
 			Colorful:                  false,         // Disable color
 		},
 	)
-	r := &yorm{
+	r := &Yorm{
 		dsn:    dsn,
 		driver: driver,
 		db:     nil,
@@ -81,7 +81,7 @@ func New(dsn string, driver Driver) (Yorm, error) {
 
 }
 
-func (r *yorm) Init(models ...interface{}) error {
+func (r *Yorm) Init(models ...interface{}) error {
 	if models == nil || len(models) == 0 {
 		return errors.New("model is missing")
 	}
@@ -93,7 +93,7 @@ func (r *yorm) Init(models ...interface{}) error {
 	return nil
 }
 
-func (r *yorm) FindOne(id int64, model interface{}) error {
+func (r *Yorm) FindOne(id int64, model interface{}) error {
 	if id <= 0 {
 		return errors.New("id is invalid")
 	}
@@ -103,15 +103,15 @@ func (r *yorm) FindOne(id int64, model interface{}) error {
 	return nil
 }
 
-func (r *yorm) First(model interface{}) {
+func (r *Yorm) First(model interface{}) {
 	r.db.First(model)
 }
 
-func (r *yorm) Last(model interface{}) {
+func (r *Yorm) Last(model interface{}) {
 	r.db.Last(model)
 }
 
-func (r *yorm) FindAll(models interface{}) error {
+func (r *Yorm) FindAll(models interface{}) error {
 
 	if err := r.db.Find(models).Error; err != nil {
 		return err
@@ -120,7 +120,7 @@ func (r *yorm) FindAll(models interface{}) error {
 	return nil
 }
 
-func (r *yorm) FindByQuery(where interface{}, models interface{}) error {
+func (r *Yorm) FindByQuery(where interface{}, models interface{}) error {
 
 	db, err := BuildWhere(r.db, where)
 	if err != nil {
@@ -134,7 +134,7 @@ func (r *yorm) FindByQuery(where interface{}, models interface{}) error {
 	return nil
 }
 
-func (r *yorm) FindByQueryForPage(where interface{}, columns interface{}, orderBy interface{}, page, rows int, models interface{}) error {
+func (r *Yorm) FindByQueryForPage(where interface{}, columns interface{}, orderBy interface{}, page, rows int, models interface{}) error {
 
 	db, err := BuildWhereForPage(r.db, where, columns, orderBy, page, rows)
 	if err != nil {
@@ -148,7 +148,7 @@ func (r *yorm) FindByQueryForPage(where interface{}, columns interface{}, orderB
 	return nil
 }
 
-func (r *yorm) Create(model interface{}) error {
+func (r *Yorm) Create(model interface{}) error {
 	if model == nil {
 		return errors.New("model is missing")
 	}
@@ -160,7 +160,7 @@ func (r *yorm) Create(model interface{}) error {
 	return nil
 }
 
-func (r *yorm) Update(model interface{}) error {
+func (r *Yorm) Update(model interface{}) error {
 	if model == nil {
 		return errors.New("model is missing")
 	}
@@ -172,7 +172,7 @@ func (r *yorm) Update(model interface{}) error {
 	return nil
 }
 
-func (r *yorm) Delete(model interface{}) error {
+func (r *Yorm) Delete(model interface{}) error {
 
 	if err := r.db.Delete(model).Error; err != nil {
 		return err
@@ -181,6 +181,6 @@ func (r *yorm) Delete(model interface{}) error {
 	return nil
 }
 
-func (r *yorm) Db() *gorm.DB {
+func (r *Yorm) Db() *gorm.DB {
 	return r.db
 }

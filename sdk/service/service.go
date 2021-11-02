@@ -9,8 +9,6 @@ import (
 
 type Service struct {
 	Orm   *db.Yorm
-	Msg   string
-	MsgID string
 	Log   *logger.Helper
 	Error error
 }
