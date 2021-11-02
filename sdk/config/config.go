@@ -36,11 +36,11 @@ func Default() {
 }
 
 func Setup(configPath string) {
-	mux.Lock()
-	defer mux.Unlock()
 	if isInit {
 		return
 	}
+	mux.Lock()
+	defer mux.Unlock()
 	currentPath, _ := os.Getwd()
 	configPath = filepath.Join(currentPath, configPath)
 	logger.DefaultLogger.Logf(logger.InfoLevel, "will load config: %s", configPath)
