@@ -35,7 +35,7 @@ type Yorm struct {
 	db     *gorm.DB
 }
 
-func NewWithDbms(connStr string) (Orm, error) {
+func NewWithDbms(connStr string) (*Yorm, error) {
 	dbms := dbms.NewClient()
 	driver, dsn, err := dbms.GetConnectionString(connStr)
 	if err != nil {
@@ -45,7 +45,7 @@ func NewWithDbms(connStr string) (Orm, error) {
 }
 
 // NewYorm func
-func New(dsn string, driver Driver) (Orm, error) {
+func New(dsn string, driver Driver) (*Yorm, error) {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
