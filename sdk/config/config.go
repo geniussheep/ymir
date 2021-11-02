@@ -9,42 +9,47 @@ import (
 )
 
 var (
-	cfg  *Config
-	once sync.Once
+	setting *Setting
+	mux     sync.RWMutex
+	isInit  bool = false
 )
 
-// Config 配置集合
-type Config struct {
+// Setting 配置集合
+type Setting struct {
 	Application *Application `yaml:"application"`
 	Logger      *Logger      `yaml:"logger"`
 	Databases   *Database    `yaml:"databases"`
 }
 
-func Current() Config {
-	once.Do(func() {
-		cfg = Default()
-	})
-
-	return *cfg
-}
-
-func Default() *Config {
-	_cfg, err := Setup("conf/config.yaml")
-	if err != nil {
-		logger.DefaultLogger.Logf(logger.ErrorLevel, "load config failed, error: %s", err)
-		os.Exit(1)
+func Instance() *Setting {
+	if isInit {
+		return setting
 	}
-	return _cfg
+	Default()
+	return setting
 }
 
-func Setup(configPath string) (*Config, error) {
+func Default() {
+	defaultConfigPath := "conf/config.yaml"
+	logger.DefaultLogger.Logf(logger.InfoLevel, "load default config:%s", defaultConfigPath)
+	Setup(defaultConfigPath)
+}
+
+func Setup(configPath string) {
+	mux.Lock()
+	defer mux.Unlock()
+	if isInit {
+		return
+	}
 	currentPath, _ := os.Getwd()
 	configPath = filepath.Join(currentPath, configPath)
 	logger.DefaultLogger.Logf(logger.InfoLevel, "will load config: %s", configPath)
 	c := config.New(configPath)
-	err := c.Unmarshal(&cfg)
+	err := c.Unmarshal(&setting)
 	if err != nil {
-		return nil, err
+		logger.DefaultLogger.Logf(logger.ErrorLevel, "load config failed, error: %s", err)
+		os.Exit(1)
 	}
-	return cfg, nil
+	isInit = true
+	logger.DefaultLogger.Logf(logger.InfoLevel, "load config success")
 }
