@@ -28,7 +28,7 @@ type Orm interface {
 	Create(model interface{}) error
 	Update(model interface{}) error
 	Delete(model interface{}) error
-	WithContext(ctx context.Context)
+	WithContext(ctx context.Context) *Yorm
 	Db() *gorm.DB
 }
 
@@ -190,6 +190,7 @@ func (r *Yorm) Db() *gorm.DB {
 	return r.db
 }
 
-func (r *Yorm) WithContext(ctx context.Context) {
+func (r *Yorm) WithContext(ctx context.Context) *Yorm {
 	r.db.WithContext(ctx)
+	return r
 }
