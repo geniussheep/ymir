@@ -2,6 +2,7 @@ package db
 
 import (
 	"errors"
+	"fmt"
 	"gitlab.benlai.work/go/dbms"
 	"log"
 	"os"
@@ -76,6 +77,8 @@ func New(dsn string, driver Driver) (*Yorm, error) {
 		}
 		r.db = db
 		break
+	default:
+		return nil, fmt.Errorf("the db driver: %s unknow", driver)
 	}
 
 	return r, nil
