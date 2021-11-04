@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"gitlab.benlai.work/go/dbms"
@@ -27,6 +28,7 @@ type Orm interface {
 	Create(model interface{}) error
 	Update(model interface{}) error
 	Delete(model interface{}) error
+	WithContext(ctx context.Context)
 	Db() *gorm.DB
 }
 
@@ -69,14 +71,7 @@ func New(dsn string, driver Driver) (*Yorm, error) {
 		}
 		r.db = db
 		break
-	case MSSQL:
-		db, err := gorm.Open(sqlserver.Open(r.dsn), &gorm.Config{Logger: newLogger})
-		if err != nil {
-			return nil, err
-		}
-		r.db = db
-		break
-	case SQLSERVER:
+	case MSSQL, SQLSERVER:
 		db, err := gorm.Open(sqlserver.Open(r.dsn), &gorm.Config{Logger: newLogger})
 		if err != nil {
 			return nil, err
@@ -193,4 +188,8 @@ func (r *Yorm) Delete(model interface{}) error {
 
 func (r *Yorm) Db() *gorm.DB {
 	return r.db
+}
+
+func (r *Yorm) WithContext(ctx context.Context) {
+	r.db.WithContext(ctx)
 }
