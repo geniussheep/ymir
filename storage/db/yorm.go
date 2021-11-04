@@ -70,6 +70,12 @@ func New(dsn string, driver Driver) (*Yorm, error) {
 		r.db = db
 		break
 	case MSSQL:
+		db, err := gorm.Open(sqlserver.Open(r.dsn), &gorm.Config{Logger: newLogger})
+		if err != nil {
+			return nil, err
+		}
+		r.db = db
+		break
 	case SQLSERVER:
 		db, err := gorm.Open(sqlserver.Open(r.dsn), &gorm.Config{Logger: newLogger})
 		if err != nil {
