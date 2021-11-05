@@ -6,4 +6,6 @@ const (
 	MYSQL     Driver = "mysql"
 	MSSQL     Driver = "mssql"
 	SQLSERVER Driver = "sqlserver"
+	PGSQL     Driver = "pgsql"
+	SQLITE    Driver = "sqlite"
 )

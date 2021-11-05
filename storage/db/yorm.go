@@ -7,11 +7,15 @@ import (
 	"gitlab.benlai.work/go/dbms"
 	"log"
 	"os"
-	// mysql driver
-	"gorm.io/driver/mysql"
-	"gorm.io/driver/sqlserver"
+
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+
+	// driver
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
+	"gorm.io/driver/sqlserver"
 )
 
 // Yorm interface
@@ -81,6 +85,20 @@ func New(opts ...Option) (*Yorm, error) {
 		break
 	case MSSQL, SQLSERVER:
 		db, err := gorm.Open(sqlserver.Open(r.dsn), &gorm.Config{Logger: newLogger})
+		if err != nil {
+			return nil, err
+		}
+		r.db = db
+		break
+	case PGSQL:
+		db, err := gorm.Open(postgres.Open(r.dsn), &gorm.Config{Logger: newLogger})
+		if err != nil {
+			return nil, err
+		}
+		r.db = db
+		break
+	case SQLITE:
+		db, err := gorm.Open(sqlite.Open(r.dsn), &gorm.Config{Logger: newLogger})
 		if err != nil {
 			return nil, err
 		}
