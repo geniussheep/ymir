@@ -7,8 +7,6 @@ import (
 	"gitlab.benlai.work/go/dbms"
 	"log"
 	"os"
-	"time"
-
 	// mysql driver
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlserver"
@@ -38,29 +36,39 @@ type Yorm struct {
 	db     *gorm.DB
 }
 
-func NewWithDbms(connStr string) (*Yorm, error) {
-	dbms := dbms.NewClient()
-	driver, dsn, err := dbms.GetConnectionString(connStr)
-	if err != nil {
-		return nil, err
-	}
-	return New(dsn, Driver(driver))
-}
-
 // NewYorm func
-func New(dsn string, driver Driver) (*Yorm, error) {
+func New(opts ...Option) (*Yorm, error) {
+	op := setDefault()
+	for _, o := range opts {
+		o(&op)
+	}
+
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
-		logger.Config{
-			SlowThreshold:             time.Second,   // Slow SQL threshold
-			LogLevel:                  logger.Silent, // Log level
-			IgnoreRecordNotFoundError: true,          // Ignore ErrRecordNotFound error for logger
-			Colorful:                  false,         // Disable color
-		},
+		op.logConfig,
 	)
+
+	if len(op.Dsn) <= 0 {
+		return nil, fmt.Errorf("db args:Dsn is empty")
+	}
+
+	if !op.UseDbms && len(op.Driver) <= 0 {
+		return nil, fmt.Errorf("db args:Driver is empty")
+	}
+
+	if op.UseDbms {
+		dbmsClient := dbms.NewClient()
+		driver, dsn, err := dbmsClient.GetConnectionString(op.Dsn)
+		op.Dsn = dsn
+		op.Driver = driver
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	r := &Yorm{
-		dsn:    dsn,
-		driver: driver,
+		dsn:    op.Dsn,
+		driver: Driver(op.Driver),
 		db:     nil,
 	}
 	switch r.driver {
@@ -79,11 +87,9 @@ func New(dsn string, driver Driver) (*Yorm, error) {
 		r.db = db
 		break
 	default:
-		return nil, fmt.Errorf("the db driver: %s unknow", driver)
+		return nil, fmt.Errorf("the db driver: %s unknow", op.Driver)
 	}
-
 	return r, nil
-
 }
 
 func (r *Yorm) Init(models ...interface{}) error {
