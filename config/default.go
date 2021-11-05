@@ -29,9 +29,8 @@ func initConfig(configPath string) Config {
 	return &c
 }
 
-func (c *config) Init(configPath string) {
-	c.instance = viper.New()
-	c.instance.SetConfigFile(configPath)
+func New(configPath string) Config {
+	return initConfig(configPath)
 }
 
 func (c *config) Get(key string) interface{} {
@@ -93,4 +92,8 @@ func (c *config) AllowEmptyEnvVar(b bool) {
 
 func (c *config) Unmarshal(rawVal interface{}) error {
 	return c.instance.Unmarshal(rawVal)
+}
+
+func (c *config) Viper() *viper.Viper {
+	return c.instance
 }
