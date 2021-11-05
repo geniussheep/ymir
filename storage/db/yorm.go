@@ -132,7 +132,7 @@ func (r *Yorm) FindByQuery(where interface{}, models interface{}) error {
 		return err
 	}
 
-	if err := db.Find(&models).Error; err != nil {
+	if err := db.Find(models).Error; err != nil {
 		return err
 	}
 
@@ -146,7 +146,7 @@ func (r *Yorm) FindByQueryForPage(where interface{}, columns interface{}, orderB
 		return err
 	}
 
-	if err := db.Find(&models).Error; err != nil {
+	if err := db.Find(models).Error; err != nil {
 		return err
 	}
 
