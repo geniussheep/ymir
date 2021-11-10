@@ -11,18 +11,15 @@ import (
 var ctx = context.Background()
 
 // NewRedis redis模式
-func New(client *redis.Client, opts ...Option) (*Redis, error) {
+func New(opts ...Option) (*Redis, error) {
 
 	op := setDefault()
 	for _, o := range opts {
 		o(&op)
 	}
 
-	if client == nil {
-		client = redis.NewClient(&op)
-	}
 	r := &Redis{
-		client: client,
+		client: redis.NewClient(&op),
 	}
 	err := r.connect()
 	if err != nil {
@@ -41,6 +38,10 @@ func (r *Redis) connect() error {
 	var err error
 	_, err = r.client.Ping(ctx).Result()
 	return err
+}
+
+func (r *Redis) Shutdown() {
+	r.client.Shutdown(ctx)
 }
 
 // GetClient 暴露原生client
