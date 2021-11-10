@@ -31,22 +31,6 @@ func New(client *redis.Client, opts ...Option) (*Redis, error) {
 	return r, nil
 }
 
-// NewRedis redis模式
-func NewWithOptions(client *redis.Client, options *redis.Options) (*Redis, error) {
-
-	if client == nil {
-		client = redis.NewClient(options)
-	}
-	r := &Redis{
-		client: client,
-	}
-	err := r.connect()
-	if err != nil {
-		return nil, err
-	}
-	return r, nil
-}
-
 // Redis cache implement
 type Redis struct {
 	client *redis.Client

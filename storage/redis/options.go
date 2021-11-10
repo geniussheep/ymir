@@ -6,7 +6,7 @@ import (
 
 type Option func(*redis.Options)
 
-func SetDefault() redis.Options {
+func setDefault() redis.Options {
 	return redis.Options{
 		Addr:       "127.0.0.1:6379",
 		Username:   "",
