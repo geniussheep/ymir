@@ -1,4 +1,4 @@
-package memory
+package cache
 
 import (
 	"fmt"
@@ -15,25 +15,25 @@ type item struct {
 }
 
 // NewMemory memory模式
-func NewMemory() *Memory {
-	return &Memory{
+func NewMemoryCache() *MemoryCache {
+	return &MemoryCache{
 		items: new(sync.Map),
 	}
 }
 
-type Memory struct {
+type MemoryCache struct {
 	items *sync.Map
 	mutex sync.RWMutex
 }
 
-func (*Memory) String() string {
-	return "memory"
+func (*MemoryCache) String() string {
+	return "memory_cache"
 }
 
-func (m *Memory) connect() {
+func (m *MemoryCache) connect() {
 }
 
-func (m *Memory) Get(key string) (string, error) {
+func (m *MemoryCache) Get(key string) (string, error) {
 	item, err := m.getItem(key)
 	if err != nil || item == nil {
 		return "", err
@@ -41,7 +41,7 @@ func (m *Memory) Get(key string) (string, error) {
 	return item.Value, nil
 }
 
-func (m *Memory) getItem(key string) (*item, error) {
+func (m *MemoryCache) getItem(key string) (*item, error) {
 	var err error
 	i, ok := m.items.Load(key)
 	if !ok {
@@ -63,7 +63,7 @@ func (m *Memory) getItem(key string) (*item, error) {
 	}
 }
 
-func (m *Memory) Set(key string, val interface{}, expire int) error {
+func (m *MemoryCache) Set(key string, val interface{}, expire int) error {
 	s, err := cast.ToStringE(val)
 	if err != nil {
 		return err
@@ -75,21 +75,21 @@ func (m *Memory) Set(key string, val interface{}, expire int) error {
 	return m.setItem(key, item)
 }
 
-func (m *Memory) setItem(key string, item *item) error {
+func (m *MemoryCache) setItem(key string, item *item) error {
 	m.items.Store(key, item)
 	return nil
 }
 
-func (m *Memory) Del(key string) error {
+func (m *MemoryCache) Del(key string) error {
 	return m.del(key)
 }
 
-func (m *Memory) del(key string) error {
+func (m *MemoryCache) del(key string) error {
 	m.items.Delete(key)
 	return nil
 }
 
-func (m *Memory) HashGet(hk, key string) (string, error) {
+func (m *MemoryCache) HashGet(hk, key string) (string, error) {
 	item, err := m.getItem(hk + key)
 	if err != nil || item == nil {
 		return "", err
@@ -97,51 +97,51 @@ func (m *Memory) HashGet(hk, key string) (string, error) {
 	return item.Value, err
 }
 
-func (m *Memory) HashDel(hk, key string) error {
+func (m *MemoryCache) HashDel(hk, key string) error {
 	return m.del(hk + key)
 }
 
-func (m *Memory) Increase(key string) error {
+func (m *MemoryCache) Increase(key string) (int64, error) {
 	return m.calculate(key, 1)
 }
 
-func (m *Memory) Decrease(key string) error {
+func (m *MemoryCache) Decrease(key string) (int64, error) {
 	return m.calculate(key, -1)
 }
 
-func (m *Memory) calculate(key string, num int) error {
+func (m *MemoryCache) calculate(key string, num int64) (int64, error) {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 	item, err := m.getItem(key)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	if item == nil {
 		err = fmt.Errorf("%s not exist", key)
-		return err
+		return 0, err
 	}
-	var n int
-	n, err = cast.ToIntE(item.Value)
+	var n int64
+	n, err = cast.ToInt64E(item.Value)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	n += num
-	item.Value = strconv.Itoa(n)
-	return m.setItem(key, item)
+	item.Value = strconv.Itoa(int(n))
+	return n, m.setItem(key, item)
 }
 
-func (m *Memory) Expire(key string, dur time.Duration) error {
+func (m *MemoryCache) Expire(key string, dur time.Duration) (bool, error) {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 	item, err := m.getItem(key)
 	if err != nil {
-		return err
+		return false, err
 	}
 	if item == nil {
 		err = fmt.Errorf("%s not exist", key)
-		return err
+		return false, err
 	}
 	item.Expired = time.Now().Add(dur)
-	return m.setItem(key, item)
+	return true, m.setItem(key, item)
 }

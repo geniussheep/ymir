@@ -11,7 +11,7 @@ import (
 var ctx = context.Background()
 
 // NewRedis redis模式
-func NewRedis(client *redis.Client, options *redis.Options) (*Redis, error) {
+func New(client *redis.Client, options *redis.Options) (*Redis, error) {
 	if client == nil {
 		client = redis.NewClient(options)
 	}
