@@ -1,14 +1,18 @@
 package cache
 
 import (
-	"github.com/go-redis/redis/v8"
 	yredis "gitlab.benlai.work/go/ymir/storage/redis"
 	"time"
 )
 
 // NewRedis redis模式
-func NewRedisCache(options *redis.Options) (*yredis.Redis, error) {
-	r, err := yredis.New(nil, options)
+func NewRedisCache(opts ...yredis.Option) (*yredis.Redis, error) {
+	op := yredis.SetDefault()
+	for _, o := range opts {
+		o(&op)
+	}
+
+	r, err := yredis.NewWithOptions(nil, &op)
 	if err != nil {
 		return nil, err
 	}
