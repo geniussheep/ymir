@@ -6,7 +6,7 @@ import (
 )
 
 // NewRedis redis模式
-func NewRedisCache(opts ...yredis.Option) (*yredis.Redis, error) {
+func NewRedisCache(opts ...yredis.Option) (*RedisCache, error) {
 	op := yredis.SetDefault()
 	for _, o := range opts {
 		o(&op)
@@ -16,7 +16,7 @@ func NewRedisCache(opts ...yredis.Option) (*yredis.Redis, error) {
 	if err != nil {
 		return nil, err
 	}
-	return r, nil
+	return &RedisCache{yredis: r}, nil
 }
 
 // Redis cache implement
