@@ -7,7 +7,10 @@ import (
 )
 
 func TestLogger(t *testing.T) {
-	l := zap.NewLogger(WithLevel(TraceLevel), WithName("zap"))
+	l, err := zap.NewLogger(WithLevel(TraceLevel), WithName("zap"))
+	if err != nil {
+
+	}
 	h1 := NewHelper(l).WithFields(map[string]interface{}{"key1": "val1"})
 	h1.Trace("trace_msg1")
 	h1.Warn("warn_msg1")
