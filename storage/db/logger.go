@@ -24,7 +24,7 @@ func (l *gormLogger) getLogger(ctx context.Context) loggerCore.Logger {
 			"x-request-id": requestId,
 		})
 	}
-	return loggerCore.DefaultLogger
+	return loggerCore.NewHelper(loggerCore.DefaultLogger)
 }
 
 // LogMode log mode

@@ -3,14 +3,12 @@ package zap
 import (
 	"context"
 	"fmt"
-	"io"
+	"gitlab.benlai.work/go/ymir/logger"
 	"os"
 	"sync"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-
-	"gitlab.benlai.work/go/ymir/logger"
 )
 
 type zaplog struct {
@@ -37,10 +35,10 @@ func (l *zaplog) Init(opts ...logger.Option) error {
 		zapConfig.EncoderConfig = zcconfig
 	}
 
-	writer, ok := l.opts.Context.Value(writerKey{}).(io.Writer)
-	if !ok {
-		writer = os.Stdout
-	}
+	//writer, ok := l.opts.Context.Value(writerKey{}).(io.Writer)
+	//if !ok {
+	//	writer = os.Stdout
+	//}
 
 	skip, ok := l.opts.Context.Value(callerSkipKey{}).(int)
 	if !ok || skip < 1 {
@@ -54,16 +52,16 @@ func (l *zaplog) Init(opts ...logger.Option) error {
 	}
 	zapConfig.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 
-	logCore := zapcore.NewCore(
-		zapcore.NewConsoleEncoder(zapConfig.EncoderConfig),
-		zapcore.NewMultiWriteSyncer(zapcore.AddSync(writer)),
-		zapConfig.Level)
-
-	log := zap.New(logCore, zap.AddCaller(), zap.AddCallerSkip(skip), zap.AddStacktrace(zap.DPanicLevel))
-	//log, err := zapConfig.Build(zap.AddCallerSkip(skip))
-	//if err != nil {
-	//	return err
-	//}
+	//logCore := zapcore.NewCore(
+	//	zapcore.NewConsoleEncoder(zapConfig.EncoderConfig),
+	//	zapcore.NewMultiWriteSyncer(zapcore.AddSync(writer)),
+	//	zapConfig.Level)
+	//
+	//log := zap.New(logCore, zap.AddCaller(), zap.AddCallerSkip(skip), zap.AddStacktrace(zap.DPanicLevel))
+	log, err := zapConfig.Build(zap.AddCallerSkip(skip))
+	if err != nil {
+		return err
+	}
 
 	// Adding seed fields if exist
 	if l.opts.Fields != nil {

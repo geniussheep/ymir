@@ -5,11 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"gitlab.benlai.work/go/dbms"
-	"log"
-	"os"
 
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 
 	// driver
 	"gorm.io/driver/mysql"
@@ -47,10 +44,7 @@ func New(opts ...Option) (*Yorm, error) {
 		o(&op)
 	}
 
-	newLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
-		op.logConfig,
-	)
+	newLogger := gormLogger{Config: op.logConfig}
 
 	if len(op.Dsn) <= 0 {
 		return nil, fmt.Errorf("db args:Dsn is empty")
@@ -77,28 +71,28 @@ func New(opts ...Option) (*Yorm, error) {
 	}
 	switch r.driver {
 	case MYSQL:
-		db, err := gorm.Open(mysql.Open(r.dsn), &gorm.Config{Logger: newLogger})
+		db, err := gorm.Open(mysql.Open(r.dsn), &gorm.Config{Logger: &newLogger})
 		if err != nil {
 			return nil, err
 		}
 		r.db = db
 		break
 	case MSSQL, SQLSERVER:
-		db, err := gorm.Open(sqlserver.Open(r.dsn), &gorm.Config{Logger: newLogger})
+		db, err := gorm.Open(sqlserver.Open(r.dsn), &gorm.Config{Logger: &newLogger})
 		if err != nil {
 			return nil, err
 		}
 		r.db = db
 		break
 	case PGSQL:
-		db, err := gorm.Open(postgres.Open(r.dsn), &gorm.Config{Logger: newLogger})
+		db, err := gorm.Open(postgres.Open(r.dsn), &gorm.Config{Logger: &newLogger})
 		if err != nil {
 			return nil, err
 		}
 		r.db = db
 		break
 	case SQLITE:
-		db, err := gorm.Open(sqlite.Open(r.dsn), &gorm.Config{Logger: newLogger})
+		db, err := gorm.Open(sqlite.Open(r.dsn), &gorm.Config{Logger: &newLogger})
 		if err != nil {
 			return nil, err
 		}
