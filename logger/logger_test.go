@@ -2,15 +2,11 @@ package logger
 
 import (
 	"context"
-	"gitlab.benlai.work/go/ymir/plugins/logger/zap"
 	"testing"
 )
 
 func TestLogger(t *testing.T) {
-	l, err := zap.NewLogger(WithLevel(TraceLevel), WithName("zap"))
-	if err != nil {
-
-	}
+	l := NewLogger(WithLevel(TraceLevel), WithName("zap"))
 	h1 := NewHelper(l).WithFields(map[string]interface{}{"key1": "val1"})
 	h1.Trace("trace_msg1")
 	h1.Warn("warn_msg1")
