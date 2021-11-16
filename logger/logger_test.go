@@ -22,4 +22,6 @@ func TestLogger(t *testing.T) {
 	v := ctx.Value(&loggerKey{})
 	ll := v.(*Helper)
 	ll.Info("test_msg")
+	ll.Infof("test_msg:%s", "args1")
+	ll.Logw(InfoLevel, map[string]interface{}{"test-field": "field-value"}, "test_msg:%s", "args1")
 }

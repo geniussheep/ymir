@@ -28,25 +28,6 @@ type defaultLogger struct {
 	opts Options
 }
 
-// Init (opts...) should only overwrite provided options
-func (l *defaultLogger) Init(opts ...Option) error {
-	for _, o := range opts {
-		o(&l.opts)
-	}
-	return nil
-}
-
-func (l *defaultLogger) String() string {
-	return "default"
-}
-
-func (l *defaultLogger) Fields(fields map[string]interface{}) Logger {
-	l.Lock()
-	l.opts.Fields = copyFields(fields)
-	l.Unlock()
-	return l
-}
-
 func copyFields(src map[string]interface{}) map[string]interface{} {
 	dst := make(map[string]interface{}, len(src))
 	for k, v := range src {
@@ -79,15 +60,7 @@ func logCallerfilePath(loggingFilePath string) string {
 	return loggingFilePath[idx+1:]
 }
 
-func (l *defaultLogger) Log(level Level, v ...interface{}) {
-	l.logf(level, "", v...)
-}
-
-func (l *defaultLogger) Logf(level Level, format string, v ...interface{}) {
-	l.logf(level, format, v...)
-}
-
-func (l *defaultLogger) logf(level Level, format string, v ...interface{}) {
+func (l *defaultLogger) logf(level Level, cfields map[string]interface{}, format string, v ...interface{}) {
 	// TODO decide does we need to write message if log level not used?
 	if !l.opts.Level.Enabled(level) {
 		return
@@ -113,20 +86,37 @@ func (l *defaultLogger) logf(level Level, format string, v ...interface{}) {
 		rec.Message = fmt.Sprintf(format, v...)
 	}
 
-	keys := make([]string, 0, len(fields))
+	metadata := ""
+
+	keys := make([]string, 0)
 	for k, v := range fields {
 		keys = append(keys, k)
 		rec.Metadata[k] = fmt.Sprintf("%v", v)
 	}
 
 	sort.Strings(keys)
-	metadata := ""
 
 	for i, k := range keys {
 		if i == 0 {
-			metadata += fmt.Sprintf("%s:%v", k, fields[k])
+			metadata += fmt.Sprintf("%s:%v\t", k, fields[k])
 		} else {
-			metadata += fmt.Sprintf(" %s:%v", k, fields[k])
+			metadata += fmt.Sprintf(" %s:%v\t", k, fields[k])
+		}
+	}
+
+	ckeys := make([]string, 0)
+	for k, v := range cfields {
+		ckeys = append(ckeys, k)
+		rec.Metadata[k] = fmt.Sprintf("%v", v)
+	}
+
+	sort.Strings(ckeys)
+
+	for i, k := range ckeys {
+		if i == 0 {
+			metadata += fmt.Sprintf("%s:%v\t", k, cfields[k])
+		} else {
+			metadata += fmt.Sprintf(" %s:%v\t", k, cfields[k])
 		}
 	}
 
@@ -149,7 +139,37 @@ func (l *defaultLogger) logf(level Level, format string, v ...interface{}) {
 	if err != nil {
 		log.Printf("log [Logf] write error: %s \n", err.Error())
 	}
+}
 
+// Init (opts...) should only overwrite provided options
+func (l *defaultLogger) Init(opts ...Option) error {
+	for _, o := range opts {
+		o(&l.opts)
+	}
+	return nil
+}
+
+func (l *defaultLogger) String() string {
+	return "default"
+}
+
+func (l *defaultLogger) Fields(fields map[string]interface{}) Logger {
+	l.Lock()
+	l.opts.Fields = copyFields(fields)
+	l.Unlock()
+	return l
+}
+
+func (l *defaultLogger) Log(level Level, v ...interface{}) {
+	l.logf(level, nil, "", v...)
+}
+
+func (l *defaultLogger) Logf(level Level, format string, v ...interface{}) {
+	l.logf(level, nil, format, v...)
+}
+
+func (l *defaultLogger) Logw(level Level, fields map[string]interface{}, format string, v ...interface{}) {
+	l.logf(level, fields, format, v...)
 }
 
 func (l *defaultLogger) Options() Options {
