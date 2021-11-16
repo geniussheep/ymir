@@ -60,7 +60,7 @@ func logCallerfilePath(loggingFilePath string) string {
 	return loggingFilePath[idx+1:]
 }
 
-func (l *defaultLogger) logf(level Level, cfields map[string]interface{}, format string, v ...interface{}) {
+func (l *defaultLogger) log(level Level, format string, fmtArg []interface{}, cfields []interface{}) {
 	// TODO decide does we need to write message if log level not used?
 	if !l.opts.Level.Enabled(level) {
 		return
@@ -81,9 +81,9 @@ func (l *defaultLogger) logf(level Level, cfields map[string]interface{}, format
 		Metadata:  make(map[string]string, len(fields)),
 	}
 	if format == "" {
-		rec.Message = fmt.Sprint(v...)
+		rec.Message = fmt.Sprint(fmtArg...)
 	} else {
-		rec.Message = fmt.Sprintf(format, v...)
+		rec.Message = fmt.Sprintf(format, fmtArg...)
 	}
 
 	metadata := ""
@@ -105,18 +105,27 @@ func (l *defaultLogger) logf(level Level, cfields map[string]interface{}, format
 	}
 
 	ckeys := make([]string, 0)
-	for k, v := range cfields {
+	for i := 0; i < len(cfields); {
+		if i >= len(cfields)-1 {
+			break
+		}
+		vi := i + 1
+		if vi > len(cfields)+1 {
+			vi = i
+		}
+		k, v := fmt.Sprintf("%s", cfields[i]), cfields[vi]
 		ckeys = append(ckeys, k)
 		rec.Metadata[k] = fmt.Sprintf("%v", v)
+		i += 2
 	}
 
 	sort.Strings(ckeys)
 
 	for i, k := range ckeys {
 		if i == 0 {
-			metadata += fmt.Sprintf("%s:%v\t", k, cfields[k])
+			metadata += fmt.Sprintf("%s:%v\t", k, rec.Metadata[k])
 		} else {
-			metadata += fmt.Sprintf(" %s:%v\t", k, cfields[k])
+			metadata += fmt.Sprintf(" %s:%v\t", k, rec.Metadata[k])
 		}
 	}
 
@@ -161,15 +170,15 @@ func (l *defaultLogger) Fields(fields map[string]interface{}) Logger {
 }
 
 func (l *defaultLogger) Log(level Level, v ...interface{}) {
-	l.logf(level, nil, "", v...)
+	l.log(level, "", v, nil)
 }
 
 func (l *defaultLogger) Logf(level Level, format string, v ...interface{}) {
-	l.logf(level, nil, format, v...)
+	l.log(level, format, v, nil)
 }
 
-func (l *defaultLogger) Logw(level Level, fields map[string]interface{}, format string, v ...interface{}) {
-	l.logf(level, fields, format, v...)
+func (l *defaultLogger) Logw(level Level, msg string, f ...interface{}) {
+	l.log(level, msg, nil, f)
 }
 
 func (l *defaultLogger) Options() Options {

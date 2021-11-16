@@ -20,7 +20,7 @@ type Logger interface {
 	// Logf writes a formatted log entry
 	Logf(level Level, format string, v ...interface{})
 	// Logf writes a msg log entry with some custom field
-	Logw(level Level, fileds map[string]interface{}, format string, v ...interface{})
+	Logw(level Level, msg string, f ...interface{})
 	// String returns the name of logger
 	String() string
 }

@@ -21,8 +21,8 @@ func (h *Helper) Infof(format string, args ...interface{}) {
 	h.Logf(InfoLevel, format, args...)
 }
 
-func (h *Helper) Infow(fields map[string]interface{}, format string, args ...interface{}) {
-	h.Logw(InfoLevel, fields, format, args...)
+func (h *Helper) Infow(msg string, fields ...interface{}) {
+	h.Logw(InfoLevel, msg, fields...)
 }
 
 func (h *Helper) Trace(args ...interface{}) {
@@ -33,8 +33,8 @@ func (h *Helper) Tracef(format string, args ...interface{}) {
 	h.Logf(TraceLevel, format, args...)
 }
 
-func (h *Helper) Tracew(fields map[string]interface{}, format string, args ...interface{}) {
-	h.Logw(TraceLevel, fields, format, args...)
+func (h *Helper) Tracew(msg string, fields ...interface{}) {
+	h.Logw(TraceLevel, msg, fields...)
 }
 
 func (h *Helper) Debug(args ...interface{}) {
@@ -45,8 +45,8 @@ func (h *Helper) Debugf(format string, args ...interface{}) {
 	h.Logf(DebugLevel, format, args...)
 }
 
-func (h *Helper) Debugw(fields map[string]interface{}, format string, args ...interface{}) {
-	h.Logw(DebugLevel, fields, format, args...)
+func (h *Helper) Debugw(msg string, fields ...interface{}) {
+	h.Logw(DebugLevel, msg, fields...)
 }
 
 func (h *Helper) Warn(args ...interface{}) {
@@ -57,8 +57,8 @@ func (h *Helper) Warnf(format string, args ...interface{}) {
 	h.Logf(WarnLevel, format, args...)
 }
 
-func (h *Helper) Warnw(fields map[string]interface{}, format string, args ...interface{}) {
-	h.Logw(WarnLevel, fields, format, args...)
+func (h *Helper) Warnw(msg string, fields ...interface{}) {
+	h.Logw(WarnLevel, msg, fields...)
 }
 
 func (h *Helper) Error(args ...interface{}) {
@@ -69,8 +69,8 @@ func (h *Helper) Errorf(format string, args ...interface{}) {
 	h.Logf(ErrorLevel, format, args...)
 }
 
-func (h *Helper) Errorw(fields map[string]interface{}, format string, args ...interface{}) {
-	h.Logw(ErrorLevel, fields, format, args...)
+func (h *Helper) Errorw(msg string, fields ...interface{}) {
+	h.Logw(ErrorLevel, msg, fields...)
 }
 
 func (h *Helper) Fatal(args ...interface{}) {
@@ -83,8 +83,8 @@ func (h *Helper) Fatalf(format string, args ...interface{}) {
 	os.Exit(1)
 }
 
-func (h *Helper) Fatalw(fields map[string]interface{}, format string, args ...interface{}) {
-	h.Logw(FatalLevel, fields, format, args...)
+func (h *Helper) Fatalw(msg string, fields ...interface{}) {
+	h.Logw(FatalLevel, msg, fields...)
 	os.Exit(1)
 }
 
@@ -117,9 +117,9 @@ func (h *Helper) Logf(level Level, format string, v ...interface{}) {
 }
 
 // Logf writes a msg log entry with some custom field
-func (h *Helper) Logw(level Level, fileds map[string]interface{}, format string, v ...interface{}) {
+func (h *Helper) Logw(level Level, msg string, f ...interface{}) {
 	if !h.Logger.Options().Level.Enabled(level) {
 		return
 	}
-	h.Logger.Fields(h.fields).Logw(level, fileds, format, v...)
+	h.Logger.Fields(h.fields).Logw(level, msg, f...)
 }
