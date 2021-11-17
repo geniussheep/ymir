@@ -2,7 +2,6 @@ package db
 
 import (
 	"gitlab.benlai.work/go/ymir/logger"
-	"gitlab.benlai.work/go/ymir/plugins/logger/zap"
 	dbLogger "gorm.io/gorm/logger"
 	"testing"
 )
@@ -41,7 +40,7 @@ func (Application) TableName() string {
 
 func TestDb(t *testing.T) {
 	var model Application
-	l, err := zap.NewLogger(logger.WithLevel(logger.TraceLevel))
+	l := logger.NewLogger(logger.WithLevel(logger.TraceLevel))
 	l.Log(logger.InfoLevel, "test-logger")
 	yorm, err := New(
 		SetDsn("sqlserver://plf_user:2KspR9JQw@192.168.60.245:1433?database=BenlaiMonitorNew&connection+timeout=30"),
