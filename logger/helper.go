@@ -10,6 +10,9 @@ type Helper struct {
 }
 
 func NewHelper(log Logger) *Helper {
+	if log == nil {
+		log = NewLogger()
+	}
 	return &Helper{Logger: log}
 }
 
