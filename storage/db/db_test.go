@@ -40,12 +40,13 @@ func (Application) TableName() string {
 
 func TestDb(t *testing.T) {
 	var model Application
-	l := logger.NewLogger(logger.WithLevel(logger.TraceLevel))
+	l := logger.NewLogger(logger.WithLevel(logger.DebugLevel))
+	logger.DefaultLogger = l
 	l.Log(logger.InfoLevel, "test-logger")
 	yorm, err := New(
 		SetDsn("sqlserver://plf_user:2KspR9JQw@192.168.60.245:1433?database=BenlaiMonitorNew&connection+timeout=30"),
 		SetDriver("mssql"),
-		SetLogLevel(dbLogger.LogLevel(logger.TraceLevel.LevelForGorm())))
+		SetLogLevel(dbLogger.LogLevel(logger.DebugLevel.LevelForGorm())))
 	if err != nil {
 		logger.Errorf("Service.Application Get error:%e", err.Error())
 	}
