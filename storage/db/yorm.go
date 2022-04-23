@@ -195,7 +195,7 @@ func (r *Yorm) Update(model interface{}) error {
 	return nil
 }
 
-func (r *Yorm) UpdateBatch(updateFileds interface{}, where interface{}) error {
+func (r *Yorm) UpdateBatch(updateFileds interface{}, where interface{}, model interface{}) error {
 	if updateFileds == nil {
 		return errors.New("updateFileds is missing")
 	}
@@ -209,7 +209,7 @@ func (r *Yorm) UpdateBatch(updateFileds interface{}, where interface{}) error {
 		return err
 	}
 
-	if err := db.Updates(updateFileds).Error; err != nil {
+	if err := db.Model(&model).Updates(updateFileds).Error; err != nil {
 		return err
 	}
 

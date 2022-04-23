@@ -87,7 +87,7 @@ func TestDb(t *testing.T) {
 	where = []interface{}{
 		[]interface{}{"id", "=", model.Id},
 	}
-	err = yorm.UpdateBatch(updateFileds, where)
+	err = yorm.UpdateBatch(updateFileds, where, &model)
 
 	err = yorm.FindByQuery(where, &model)
 
