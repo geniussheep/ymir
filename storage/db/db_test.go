@@ -38,21 +38,58 @@ func (Application) TableName() string {
 	return "tb_bel_application"
 }
 
+type KSCSlb struct {
+	// 服务器Id
+	Id int `json:"id" gorm:"column:id;primaryKey;autoIncrement;comment:主键编码"`
+
+	// 环境
+	EnvironmentType string `json:"environment_type" gorm:"column:environment_type;size:256;comment:环境"`
+
+	// 金山云的slb类型
+	Type string `json:"type" gorm:"column:type;comment:金山云的slb类型"`
+
+	// 金山云slb网段id
+	SubnetId string `json:"subnetid" gorm:"column:subnetid;comment:金山云slb网段id"`
+
+	// 当前网段使用数量
+	CurrUsedCount int `json:"curr_used_count" gorm:"column:curr_used_count;comment:当前网段使用数量"`
+}
+
+func (KSCSlb) TableName() string {
+	return "tb_bel_ksc_slb"
+}
+
 func TestDb(t *testing.T) {
-	var model Application
+	var model KSCSlb
 	l := logger.NewLogger(logger.WithLevel(logger.DebugLevel))
 	logger.DefaultLogger = l
 	l.Log(logger.InfoLevel, "test-logger")
 	yorm, err := New(
-		SetDsn("sqlserver://plf_user:2KspR9JQw@192.168.60.245:1433?database=BenlaiMonitorNew&connection+timeout=30"),
+		SetDsn("sqlserver://plf_user:2KspR9JQw@10.250.60.245:1433?database=BenlaiMonitorNew&connection+timeout=30"),
 		SetDriver("mssql"),
 		SetLogLevel(dbLogger.LogLevel(logger.DebugLevel.LevelForGorm())))
 	if err != nil {
-		logger.Errorf("Service.Application Get error:%e", err.Error())
+		logger.Errorf("Service.KSCSlb Get error:%e", err.Error())
 	}
-	err = yorm.FindOne(32, &model)
+
+	where := []interface{}{
+		[]interface{}{"environment_type", "=", "trunk"},
+		[]interface{}{"curr_used_count", "<", 1022},
+	}
+
+	err = yorm.FindByQuery(where, &model)
+
 	if err != nil {
-		logger.Errorf("Service.Application Get error:%s", err.Error())
+		logger.Errorf("Service.KSCSlb Get error:%s", err.Error())
 	}
+	updateFileds := map[string]interface{}{"curr_used_count": 12}
+
+	where = []interface{}{
+		[]interface{}{"id", "=", model.Id},
+	}
+	err = yorm.UpdateBatch(updateFileds, where)
+
+	err = yorm.FindByQuery(where, &model)
+
 	logger.Infof("get model %v", model)
 }

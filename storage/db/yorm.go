@@ -195,6 +195,27 @@ func (r *Yorm) Update(model interface{}) error {
 	return nil
 }
 
+func (r *Yorm) UpdateBatch(updateFileds interface{}, where interface{}) error {
+	if updateFileds == nil {
+		return errors.New("updateFileds is missing")
+	}
+
+	if where == nil {
+		return errors.New("where condition is missing")
+	}
+
+	db, err := BuildWhere(r.db, where)
+	if err != nil {
+		return err
+	}
+
+	if err := db.Updates(updateFileds).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r *Yorm) Delete(model interface{}) error {
 
 	if err := r.db.Delete(model).Error; err != nil {

@@ -1,0 +1,22 @@
+application:
+  appId: 10
+  appKey: '223-----------------323'
+  appName: 'appName'
+  httpPort: 9090111
+databases:
+  benlaimonitor:
+    dsn: 'databases-dsn123456'
+    driver: 'sqlserver'
+    useDbms: true
+    logConfig:
+      slowThresholdMS: 1000
+      level: 'info'
+      ignoreRecordNotFoundError: true
+
+logger:
+  type: 'zap'
+  Level: 'debug'
+redis:
+  cache:
+    addr: 192.168.60.12:6379
+    db: 0
