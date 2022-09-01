@@ -22,14 +22,17 @@ type config struct {
 //	}
 //}
 
-func initConfig(configPath string) Config {
+func initConfig(configPath string) (Config, error) {
 	c := config{instance: viper.New()}
 	c.instance.SetConfigFile(configPath)
-	c.instance.ReadInConfig()
-	return &c
+	err := c.instance.ReadInConfig()
+	if err != nil {
+		return nil, err
+	}
+	return &c, nil
 }
 
-func New(configPath string) Config {
+func New(configPath string) (Config, error) {
 	return initConfig(configPath)
 }
 

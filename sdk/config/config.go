@@ -4,13 +4,14 @@ import "C"
 import (
 	"gitlab.benlai.work/go/ymir/config"
 	"gitlab.benlai.work/go/ymir/logger"
+	"gitlab.benlai.work/go/ymir/sdk/common"
 	"os"
 	"path/filepath"
 	"sync"
 )
 
 var (
-	ExtendConfig interface{}
+	ExtendConfig any
 	setting      *Setting
 	mux          sync.RWMutex
 	isInit       bool = false
@@ -22,7 +23,7 @@ type Setting struct {
 	Logger      *Logger               `yaml:"logger"`
 	Databases   *map[string]*Database `yaml:"databases"`
 	Redis       *map[string]*Redis    `yaml:"redis"`
-	Extend      interface{}           `yaml:"extend"`
+	Extend      any                   `yaml:"extend"`
 	callbacks   []func()
 }
 
@@ -46,7 +47,7 @@ func (cfg *Setting) init() {
 }
 
 func Default() {
-	defaultConfigPath := "conf/config.yaml"
+	defaultConfigPath := common.DEFAULT_CONFIG_FILE_PATH
 	logger.DefaultLogger.Logf(logger.InfoLevel, "load default config:%s", defaultConfigPath)
 	Setup(defaultConfigPath)
 }
@@ -60,7 +61,11 @@ func Setup(configPath string, cbs ...func()) {
 	currentPath, _ := os.Getwd()
 	configPath = filepath.Join(currentPath, configPath)
 	logger.DefaultLogger.Logf(logger.InfoLevel, "will load config: %s", configPath)
-	c := config.New(configPath)
+	c, err := config.New(configPath)
+	if err != nil {
+		logger.DefaultLogger.Logf(logger.ErrorLevel, "load config failed, error: %s", err)
+		os.Exit(1)
+	}
 	setting = &Setting{
 		Application: ApplicationConfig,
 		Logger:      LoggerConfig,
@@ -69,7 +74,7 @@ func Setup(configPath string, cbs ...func()) {
 		Extend:      ExtendConfig,
 		callbacks:   cbs,
 	}
-	err := c.Unmarshal(&setting)
+	err = c.Unmarshal(&setting)
 	if err != nil {
 		logger.DefaultLogger.Logf(logger.ErrorLevel, "load config failed, error: %s", err)
 		os.Exit(1)

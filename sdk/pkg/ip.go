@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// 获取外网ip地址
+// GetLocation 获取外网ip地址
 func GetLocation(ip, key string) string {
 	if ip == "127.0.0.1" || ip == "localhost" {
 		return "内部IP"
@@ -38,8 +38,8 @@ func GetLocation(ip, key string) string {
 	return m["country"] + "-" + m["province"] + "-" + m["city"] + "-" + m["district"] + "-" + m["isp"]
 }
 
-// 获取局域网ip地址
-func GetLocaHost() string {
+// GetLocalHost 获取局域网ip地址
+func GetLocalHost() string {
 	netInterfaces, err := net.Interfaces()
 	if err != nil {
 		fmt.Println("net.Interfaces failed, err:", err.Error())
@@ -62,6 +62,7 @@ func GetLocaHost() string {
 	return ""
 }
 
+// GetClientIP 获取客户端Ip
 func GetClientIP(c *gin.Context) string {
 	ClientIP := c.ClientIP()
 	fmt.Println("ClientIP:", ClientIP)

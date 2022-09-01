@@ -1,12 +1,17 @@
 package config
 
 import (
+	"fmt"
+	"gitlab.benlai.work/go/ymir/sdk/common"
 	"testing"
 )
 
 func TestNew(t *testing.T) {
 
-	c := New("./conf/config.yaml")
+	c, err := New(common.DEFAULT_CONFIG_FILE_PATH)
+	if err != nil {
+		fmt.Printf("error: %s", err)
+	}
 
-	c.Get("databases.monitor.")
+	fmt.Println(c.Get("databases.monitor"))
 }

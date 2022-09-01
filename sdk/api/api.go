@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"gitlab.benlai.work/go/ymir/sdk/api/response"
 	"gitlab.benlai.work/go/ymir/sdk/config"
 	"gitlab.benlai.work/go/ymir/sdk/pkg"
@@ -117,7 +119,7 @@ func (api *Api) AppendRouters(routerPrefix string, routers ...RouterEntry) *Api 
 	return api
 }
 
-// RegisterAPIs registers APIs.
+// RegisterRouters registers APIs.
 func (api *Api) RegisterRouters(engine *gin.Engine) {
 	isDebug := config.ApplicationConfig.Mode == pkg.Dev.String() || config.ApplicationConfig.Mode == pkg.Test.String()
 	engine.Use(LoggerMiddleware(logger.NewHelper(logger.DefaultLogger), isDebug, "/scanv.htm"))
@@ -150,6 +152,7 @@ func (api *Api) RegisterRouters(engine *gin.Engine) {
 	engine.GET("/scanv.htm", func(c *gin.Context) {
 		c.String(http.StatusOK, "ok")
 	})
+	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
 // Error 通常错误数据处理
