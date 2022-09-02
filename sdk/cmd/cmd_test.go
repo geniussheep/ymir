@@ -14,6 +14,6 @@ func TestRootCmd(t *testing.T) {
 		ConfigFilePath: common.DEFAULT_CONFIG_FILE_PATH,
 		ExtendConfig:   nil,
 	}
-	rootCmd := New[any](p)
+	rootCmd := New(p)
 	rootCmd.Execute()
 }

@@ -18,7 +18,7 @@ type rootCmd struct {
 }
 
 // New 新建默认Cli程序主体
-func New[T any](p *cli.Program) cli.Cmd {
+func New(p *cli.Program) cli.Cmd {
 	c := rootCmd{
 		Program:  p,
 		flagSets: make(map[string]cli.FlagSet, 0),

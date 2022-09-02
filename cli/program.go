@@ -29,5 +29,5 @@ type Program struct {
 	ConfigFilePath string
 
 	// 应用的扩展配置
-	ExtendConfig interface{}
+	ExtendConfig any
 }
