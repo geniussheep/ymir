@@ -19,7 +19,7 @@ import (
 type Api struct {
 	Context *gin.Context
 	Logger  *logger.Helper
-	Orm     *db.Yorm
+	Orm     map[string]*db.Yorm
 	Routers map[string][]RouterEntry
 	Errors  error
 }
@@ -87,11 +87,14 @@ func (api *Api) Bind(d interface{}, bindings ...binding.Binding) *Api {
 }
 
 func (api *Api) MakeOrm(dbName string) *Api {
+	if _, ok := api.Orm[dbName]; ok {
+		return api
+	}
 	yorm, err := GetOrm(api.Context, dbName)
 	if err != nil {
 		api.AddError(fmt.Errorf("set orm:[name: %s] error: %s", dbName, err))
 	}
-	api.Orm = yorm
+	api.Orm[dbName] = yorm
 	return api
 }
 

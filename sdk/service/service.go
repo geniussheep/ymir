@@ -8,7 +8,7 @@ import (
 )
 
 type Service struct {
-	Orm   *db.Yorm
+	Orm   map[string]*db.Yorm
 	Log   *logger.Helper
 	Error error
 }
