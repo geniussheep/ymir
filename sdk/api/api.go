@@ -85,6 +85,9 @@ func (api *Api) Bind(d interface{}, bindings ...binding.Binding) *Api {
 }
 
 func (api *Api) MakeOrm(dbName string) *Api {
+	if api.Orm == nil {
+		api.Orm = make(map[string]*db.Yorm)
+	}
 	if _, ok := api.Orm[dbName]; ok {
 		return api
 	}
