@@ -1,0 +1,20 @@
+application:
+  appId: 10
+  appKey: '223323'
+  appName: 'appName'
+  httpPort: 9090
+databases:
+  monitor:
+    dsn: 'sqlserver://plf_user:2KspR9JQw@10.250.60.245:1433?database=BenlaiMonitorNew&connection+timeout=30'
+    driver: 'sqlserver'
+    use_dbms: false
+    log_config:
+      slow_threshold_ms: 1000
+      level: 'info'
+logger:
+  type: 'zap'
+  Level: 'debug'
+extend:
+  jenkins:
+    p2c-api: 'p2c-api-test'
+    p2c-erp: 'p2c-erp-test'
