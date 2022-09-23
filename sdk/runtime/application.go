@@ -27,6 +27,7 @@ func New() *Application {
 	return &Application{
 		dbs:         make(map[string]*db.Yorm),
 		cache:       cache.NewMemoryCache(),
+		redis:       make(map[string]*redis.Redis),
 		casbins:     make(map[string]*casbin.SyncedEnforcer),
 		middlewares: make(map[string]interface{}),
 		handler:     make(map[string][]func(r *gin.RouterGroup, hand ...*gin.HandlerFunc)),
@@ -98,5 +99,8 @@ func (a *Application) SetRedis(rName string, redis *redis.Redis) {
 func (a *Application) GetRedis(rName string) *redis.Redis {
 	a.mux.Lock()
 	defer a.mux.Unlock()
+	if _, ok := a.redis[rName]; !ok {
+		return nil
+	}
 	return a.redis[rName]
 }
