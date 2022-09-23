@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"gitlab.benlai.work/go/ymir/sdk/common"
+	"gitlab.benlai.work/go/ymir/sdk/storage/db"
+	"gitlab.benlai.work/go/ymir/sdk/storage/redis"
 	"log"
 	"net/http"
 	"os"
@@ -17,8 +19,6 @@ import (
 	"gitlab.benlai.work/go/ymir/sdk/api"
 	"gitlab.benlai.work/go/ymir/sdk/config"
 	"gitlab.benlai.work/go/ymir/sdk/pkg"
-	"gitlab.benlai.work/go/ymir/sdk/storage/db"
-	"gitlab.benlai.work/go/ymir/sdk/storage/redis"
 )
 
 type apiServerFlag struct {
@@ -94,7 +94,12 @@ func run(p *cli.Program) error {
 
 func setup(p *cli.Program) {
 	config.ExtendConfig = p.ExtendConfig
+
 	config.Setup(p.ConfigFilePath, db.Setup, redis.Setup)
+
+	for _, sf := range p.InitFuncArray {
+		sf()
+	}
 
 	var r *gin.Engine
 	h := sdk.Runtime.GetEngine()

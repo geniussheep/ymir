@@ -30,4 +30,7 @@ type Program struct {
 
 	// 应用的扩展配置
 	ExtendConfig any
+
+	// 初始化方法
+	InitFuncArray []func()
 }
