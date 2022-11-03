@@ -49,7 +49,7 @@ func Setup() {
 		)
 
 		if err != nil {
-			logger.Fatal(pkg.Red(fmt.Sprintf("db:%s connect error: %s", cfg.Driver, err)))
+			logger.Fatal(pkg.Red(fmt.Sprintf("db-%s:[%v] connect error: %s", n, cfg, err)))
 			os.Exit(0)
 		}
 		sdk.Runtime.SetDb(n, yorm)

@@ -21,7 +21,7 @@ func Setup() {
 			redis.SetMaxRetries(cfg.MaxRetries),
 		)
 		if err != nil {
-			logger.Fatal(pkg.Red(fmt.Sprintf("redis:%s connect error: %s", cfg.Addr, err)))
+			logger.Fatal(pkg.Red(fmt.Sprintf("redis-%s:[%v] connect error: %s", n, cfg, err)))
 			os.Exit(0)
 		}
 		sdk.Runtime.SetRedis(n, r)
