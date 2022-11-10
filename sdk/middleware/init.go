@@ -9,6 +9,7 @@ var (
 func init() {
 	middlewares = append(middlewares, WithContextDb)
 	middlewares = append(middlewares, CustomError)
+	middlewares = append(middlewares, CORS)
 }
 
 func Append(middleware gin.HandlerFunc) {
