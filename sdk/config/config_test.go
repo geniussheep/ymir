@@ -5,11 +5,12 @@ import (
 	"testing"
 )
 
-type Extend struct {
-	Jenkins map[string]string `yaml:"jenkins"`
+type ExtendTest struct {
+	Jenkins      string `yaml:"jenkins" defaultValue:"https://jenkins.benlai.cloud"`
+	JenkinsAgent string `yaml:"jenkinsAgent" defaultValue:"jenkins-agent"`
 }
 
-var ExtendConfigTest Extend
+var ExtendConfigTest ExtendTest
 
 func TestDefault(t *testing.T) {
 
@@ -17,9 +18,7 @@ func TestDefault(t *testing.T) {
 	Default()
 
 	println(fmt.Sprintf("appId: %d, appName:%s", ApplicationConfig.AppId, ApplicationConfig.AppName))
-	for k, v := range ExtendConfigTest.Jenkins {
-		println(fmt.Sprintf("%s: %s", k, v))
-	}
+	println(fmt.Sprintf("jenkins: %s, jenkinsAgent:%s", ExtendConfigTest.Jenkins, ExtendConfigTest.JenkinsAgent))
 
 	for k, v := range DatabaseConfig {
 		println(fmt.Sprintf("%s: %v", k, v))

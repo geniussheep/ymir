@@ -7,8 +7,69 @@ import (
 	"strings"
 )
 
-///region 业务上扩展方法
 // BuildWhere 构建where条件
+//
+//1、and条件测试
+//where := []interface{}{
+//	[]interface{}{"id", "=", 1},
+//	[]interface{}{"username", "chen"},
+//}
+//db, err = entity.BuildWhere(db, where)
+//db.Find(&users)
+//// SELECT * FROM `users`  WHERE (id = 1)and(username = 'chen')
+//
+//2、结构体条件测试
+//where := user.User{ID: 1, UserName: "chen"}
+//db, err = entity.BuildWhere(db, where)
+//db.Find(&users)
+//// SELECT * FROM `users`  WHERE (id = 1) and (username = 'chen')
+//
+//3、in,or条件测试
+//where := []interface{}{
+//	[]interface{}{"id", "in", []int{1, 2}},
+//	[]interface{}{"username", "=", "chen", "or"},
+//}
+//db, err = entity.BuildWhere(db, where)
+//db.Find(&users)
+//// SELECT * FROM `users`  WHERE (id in ('1','2')) OR (username = 'chen')
+//
+//3.1、not in,or条件测试
+//where := []interface{}{
+//	[]interface{}{"id", "not in", []int{1}},
+//	[]interface{}{"username", "=", "chen", "or"},
+//}
+//db, err = entity.BuildWhere(db, where)
+//db.Find(&users)
+//// SELECT * FROM `users`  WHERE (id not in ('1')) OR (username = 'chen')
+//
+//4、map条件测试
+//where := map[string]interface{}{"id": 1, "username": "chen"}
+//db, err = entity.BuildWhere(db, where)
+//db.Find(&users)
+//// SELECT * FROM `users`  WHERE (`users`.`id` = '1') AND (`users`.`username` = 'chen')
+//
+//5、and,or混合条件测试
+//where := []interface{}{
+//	[]interface{}{"id", "in", []int{1, 2}},
+//	[]interface{}{"username = ? or nickname = ?", "chen", "yond"},
+//}
+//db, err = entity.BuildWhere(db, where)
+//db.Find(&users)
+//// SELECT * FROM `users`  WHERE (id in ('1','2')) AND (username = 'chen' or nickname = 'yond')
+//
+////注：不要使用下方方法
+///*
+//where := []interface{}{
+//	[]interface{}{"id", "in", []int{1, 2}},
+//	[]interface{}{
+//		[]interface{}{"username", "=", "chen"},
+//		[]interface{}{"username", "=", "yond", "or"},
+//	},
+//}
+//// 返回sql: SELECT * FROM `users`  WHERE (id in ('1','2')) AND (username = 'chen') OR (username = 'yond')
+//// 与设想不一样
+//// 经过测试，gorm底层暂时不支持db.Where(func(db *gorm.DB) *gorm.DB {})闭包方法
+//*/
 func BuildWhere(db *gorm.DB, where interface{}) (*gorm.DB, error) {
 	var err error
 	t := reflect.TypeOf(where).Kind()

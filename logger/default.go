@@ -80,11 +80,15 @@ func (l *defaultLogger) log(level Level, format string, fmtArg []interface{}, cf
 		Timestamp: time.Now(),
 		Metadata:  make(map[string]string, len(fields)),
 	}
+	message := ""
 	if format == "" {
-		rec.Message = fmt.Sprint(fmtArg...)
+		for _, fa := range fmtArg {
+			message += fmt.Sprintf("%v\t", fa)
+		}
 	} else {
-		rec.Message = fmt.Sprintf(format, fmtArg...)
+		message = fmt.Sprintf(format, fmtArg...)
 	}
+	rec.Message = message
 
 	metadata := ""
 

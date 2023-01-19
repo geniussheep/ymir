@@ -15,7 +15,7 @@ import (
 	"gorm.io/driver/sqlserver"
 )
 
-// Yorm interface
+// Orm -- Yorm interface
 type Orm interface {
 	Init(models ...interface{}) error
 	FindOne(id int64, model interface{}) error

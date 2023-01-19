@@ -1,8 +1,8 @@
 package yaml
 
 import (
-	"github.com/ghodss/yaml"
 	"gitlab.benlai.work/go/ymir/encoder"
+	"gopkg.in/yaml.v3"
 )
 
 type yamlEncoder struct{}

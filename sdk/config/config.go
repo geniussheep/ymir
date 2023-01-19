@@ -52,6 +52,52 @@ func Default() {
 	Setup(defaultConfigPath)
 }
 
+//// 设置Extend的默认值
+//func setExtDV(c *config.Config, ext any) {
+//	if ext == nil {
+//		return
+//	}
+//	extType := reflect.ValueOf(ext)
+//	if extType.Kind() != reflect.Struct {
+//		return
+//	}
+//
+//	for i := 0; i < extType.NumField(); i++ {
+//		switch extType.Type().Field(i).Type().Kind() {
+//
+//		case reflect.Struct:
+//			break;
+//		case reflect.Bool:
+//		case reflect.Int:
+//		case reflect.Int8:
+//		case reflect.Int16:
+//		case reflect.Int32:
+//		case reflect.Int64:
+//		case reflect.Uint:
+//		case reflect.Uint8:
+//		case reflect.Uint16:
+//		case reflect.Uint32:
+//		case reflect.Uint64:
+//		case reflect.Uintptr:
+//		case reflect.Float32:
+//		case reflect.Float64:
+//		case reflect.String:
+//			break
+//		case reflect.Complex64:
+//		case reflect.Complex128:
+//		case reflect.Array:
+//		case reflect.Chan:
+//		case reflect.Func:
+//		case reflect.Interface:
+//		case reflect.Map:
+//		case reflect.Pointer:
+//		case reflect.Slice:
+//		case reflect.Invalid:
+//			break;
+//		}
+//	}
+//}
+
 func Setup(configPath string, cbs ...func()) {
 	if isInit {
 		return
