@@ -25,7 +25,7 @@ func getLogLevel(l string) dbLogger.LogLevel {
 	case "info":
 		return dbLogger.Info
 	default:
-		return dbLogger.Warn
+		return dbLogger.Info
 	}
 }
 
