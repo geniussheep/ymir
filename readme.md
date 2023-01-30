@@ -12,5 +12,6 @@ require (
 	gitlab.benlai.work/go/ymir v1.1.8
 )
 ```
+- ### 删除go.mod的继承require
 - ### 执行 go mod tidy
 - ### 执行 swag init --parseDependency --parseInternal
