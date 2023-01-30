@@ -1,4 +1,6 @@
-## 生成swagger文件
+# ymir 用于go的webapi基础框架
+
+## 使用ymir框架生成swagger文件步骤
 - ### 修改 go.mod 
 ```go
 require (
