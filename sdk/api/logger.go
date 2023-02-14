@@ -15,7 +15,7 @@ import (
 // GetRequestLogger 获取上下文提供的日志
 func GetRequestLogger(c *gin.Context) *logger.Helper {
 	var log *logger.Helper
-	l, ok := c.Get(request.LoggerKey)
+	l, ok := c.Get(logger.LoggerKey)
 	if ok {
 		ok = false
 		log, ok = l.(*logger.Helper)
@@ -26,7 +26,7 @@ func GetRequestLogger(c *gin.Context) *logger.Helper {
 	//如果没有在上下文中放入logger
 	requestId := request.GenerateMsgIDFromContext(c)
 	log = logger.NewHelper(logger.DefaultLogger).WithFields(map[string]interface{}{
-		strings.ToLower(request.TrafficKey): requestId,
+		strings.ToLower(logger.TrafficKey): requestId,
 	})
 	return log
 }
@@ -35,9 +35,9 @@ func GetRequestLogger(c *gin.Context) *logger.Helper {
 func SetRequestLogger(c *gin.Context) {
 	requestId := request.GenerateMsgIDFromContext(c)
 	log := logger.NewHelper(logger.DefaultLogger).WithFields(map[string]interface{}{
-		strings.ToLower(request.TrafficKey): requestId,
+		strings.ToLower(logger.TrafficKey): requestId,
 	})
-	c.Set(request.LoggerKey, log)
+	c.Set(logger.LoggerKey, log)
 }
 
 func logRequest(log *logger.Helper, path string, raw string, req *http.Request) {
@@ -51,14 +51,14 @@ func logRequest(log *logger.Helper, path string, raw string, req *http.Request) 
 	}
 
 	log.Debugw("",
-		"path", path,
-		"header", req.Header,
-		"body", string(body),
+		"Path", path,
+		"reqHeader", req.Header,
+		"reqBody", string(body),
 	)
 
 }
 
-func LoggerMiddleware(log *logger.Helper, debug bool, notlogged ...string) gin.HandlerFunc {
+func LoggerMiddleware(debug bool, notlogged ...string) gin.HandlerFunc {
 
 	var skip map[string]struct{}
 
@@ -71,6 +71,7 @@ func LoggerMiddleware(log *logger.Helper, debug bool, notlogged ...string) gin.H
 	}
 
 	return func(c *gin.Context) {
+		log := GetRequestLogger(c)
 
 		start := time.Now()
 		path := c.Request.URL.Path
@@ -83,7 +84,6 @@ func LoggerMiddleware(log *logger.Helper, debug bool, notlogged ...string) gin.H
 		}
 
 		c.Next()
-
 		if _, ok := skip[path]; !ok {
 			end := time.Now()
 			latency := end.Sub(start)
@@ -91,7 +91,7 @@ func LoggerMiddleware(log *logger.Helper, debug bool, notlogged ...string) gin.H
 			method := c.Request.Method
 			statusCode := c.Writer.Status()
 			errorMessage := c.Errors.ByType(gin.ErrorTypePrivate).String()
-			bodySize := c.Writer.Size()
+			respBodySize := c.Writer.Size()
 			lv := logger.InfoLevel
 			if len(errorMessage) > 0 {
 				lv = logger.ErrorLevel
@@ -100,7 +100,9 @@ func LoggerMiddleware(log *logger.Helper, debug bool, notlogged ...string) gin.H
 			if raw != "" {
 				path = path + "?" + raw
 			}
-
+			if debug {
+				return
+			}
 			log.Logw(
 				lv,
 				"",
@@ -110,7 +112,7 @@ func LoggerMiddleware(log *logger.Helper, debug bool, notlogged ...string) gin.H
 				"method", method,
 				"statusCode", statusCode,
 				"errorMessage", errorMessage,
-				"bodySize", bodySize,
+				"respBodySize", respBodySize,
 			)
 		}
 	}

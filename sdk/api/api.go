@@ -8,7 +8,9 @@ import (
 	"gitlab.benlai.work/go/ymir/sdk/config"
 	"gitlab.benlai.work/go/ymir/sdk/pkg"
 	"gitlab.benlai.work/go/ymir/sdk/service"
+	"gitlab.benlai.work/go/ymir/storage/redis"
 	"net/http"
+	"strings"
 
 	"gitlab.benlai.work/go/ymir/logger"
 	"gitlab.benlai.work/go/ymir/storage/db"
@@ -18,6 +20,7 @@ type Api struct {
 	Context *gin.Context
 	Logger  *logger.Helper
 	Orm     map[string]*db.Yorm
+	Redis   map[string]*redis.Redis
 	Routers map[string][]RouterEntry
 	Errors  error
 }
@@ -99,9 +102,25 @@ func (api *Api) MakeOrm(dbName string) *Api {
 	return api
 }
 
-func (api *Api) MakeService(c *service.Service) *Api {
-	c.Log = api.Logger
-	c.Orm = api.Orm
+func (api *Api) MakeRedis(redisName string) *Api {
+	if api.Redis == nil {
+		api.Redis = make(map[string]*redis.Redis)
+	}
+	if _, ok := api.Redis[redisName]; ok {
+		return api
+	}
+	redis, err := GetRedis(api.Context, redisName)
+	if err != nil {
+		api.AddError(fmt.Errorf("set redis:[name: %s] error: %s", redisName, err))
+	}
+	api.Redis[redisName] = redis
+	return api
+}
+
+func (api *Api) MakeService(svc *service.Service) *Api {
+	svc.Log = api.Logger
+	svc.Orm = api.Orm
+	svc.Redis = api.Redis
 	return api
 }
 
@@ -125,8 +144,9 @@ func (api *Api) AppendRouters(routerPrefix string, routers ...RouterEntry) *Api 
 
 // RegisterRouters registers APIs.
 func (api *Api) RegisterRouters(engine *gin.Engine) {
-	isDebug := config.ApplicationConfig.Mode == pkg.Dev.String() || config.ApplicationConfig.Mode == pkg.Test.String()
-	engine.Use(LoggerMiddleware(logger.NewHelper(logger.DefaultLogger), isDebug, "/scanv.htm"))
+	isDebug := strings.ToLower(config.ApplicationConfig.Mode) == pkg.Dev.String() ||
+		strings.ToLower(config.ApplicationConfig.Mode) == pkg.Test.String()
+	engine.Use(LoggerMiddleware(isDebug, "/scanv.htm"))
 
 	if api.Routers == nil {
 		api.AddError(fmt.Errorf("register api routers error: api.Routers is nil"))

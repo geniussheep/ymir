@@ -1,5 +1,7 @@
 package cli
 
+import "github.com/gin-gonic/gin"
+
 type CmdInfo struct {
 	// Command
 	Command string
@@ -22,15 +24,19 @@ type Program struct {
 	// 程序版本
 	Version string
 
-	// 应用的ApiRouter扫描
-	AppRoutersScan []func()
-
 	// 应用的配置文件路径
 	ConfigFilePath string
 
 	// 应用的扩展配置
 	ExtendConfig any
 
+	// 应用的ApiRouter扫描
+	AppRoutersScan []func()
+
+	// gin的中间中间件加载
+	MiddleWareFuncArray []gin.HandlerFunc
+
 	// 初始化方法
+	// 加载默认中间件方法 middleware.AppendDefault()
 	InitFuncArray []func()
 }

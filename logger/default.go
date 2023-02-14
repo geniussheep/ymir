@@ -14,6 +14,11 @@ import (
 	dlog "gitlab.benlai.work/go/ymir/debug/log"
 )
 
+var (
+	LoggerKey  = "_ymir-logger-request"
+	TrafficKey = "X-Request-Id"
+)
+
 func init() {
 	lvl, err := GetLevel(os.Getenv("YMIR_LOG_LEVEL"))
 	if err != nil {

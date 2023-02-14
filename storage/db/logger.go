@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"gorm.io/gorm/logger"
@@ -18,10 +19,14 @@ type gormLogger struct {
 }
 
 func (l *gormLogger) getLogger(ctx context.Context) loggerCore.Logger {
-	requestId := ctx.Value("X-Request-Id")
+	log := ctx.Value(loggerCore.LoggerKey)
+	if log != nil {
+		return log.(*loggerCore.Helper)
+	}
+	requestId := ctx.Value(loggerCore.TrafficKey)
 	if requestId != nil {
 		return loggerCore.DefaultLogger.Fields(map[string]interface{}{
-			"x-request-id": requestId,
+			strings.ToLower(loggerCore.TrafficKey): requestId,
 		})
 	}
 	return loggerCore.NewHelper(loggerCore.DefaultLogger)

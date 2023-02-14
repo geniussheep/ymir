@@ -6,8 +6,8 @@ import (
 )
 
 func TestDb(t *testing.T) {
-	r, err := New(nil,
-		SetAddr("192.168.60.12:6379"),
+	r, err := New(
+		SetAddr("10.250.60.11:6379"),
 		SetDB(0),
 	)
 	if err != nil {

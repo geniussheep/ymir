@@ -6,8 +6,9 @@ var (
 	middlewares = make([]gin.HandlerFunc, 0)
 )
 
-func init() {
+func AppendDefault() {
 	middlewares = append(middlewares, WithContextDb)
+	middlewares = append(middlewares, WithContextRedis)
 	middlewares = append(middlewares, CustomError)
 	middlewares = append(middlewares, CORS)
 }

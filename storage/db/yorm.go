@@ -37,11 +37,13 @@ type Yorm struct {
 	db     *gorm.DB
 }
 
-// NewYorm func
+// New Yorm func
 func New(opts ...Option) (*Yorm, error) {
 	op := setDefault()
 	for _, o := range opts {
-		o(&op)
+		if o != nil {
+			o(&op)
+		}
 	}
 
 	newLogger := gormLogger{Config: op.logConfig}
@@ -230,6 +232,6 @@ func (r *Yorm) Db() *gorm.DB {
 }
 
 func (r *Yorm) WithContext(ctx context.Context) *Yorm {
-	r.db.WithContext(ctx)
+	r.db = r.db.WithContext(ctx)
 	return r
 }

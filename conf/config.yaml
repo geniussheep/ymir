@@ -4,13 +4,16 @@ application:
   appName: 'appName'
   httpPort: 9090
 databases:
-  monitor:
+  dbMonitor:
     dsn: 'sqlserver://plf_user:2KspR9JQw@10.250.60.245:1433?database=BenlaiMonitorNew&connection+timeout=30'
-    driver: 'sqlserver'
-    use_dbms: false
-    log_config:
-      slow_threshold_ms: 1000
-      level: 'info'
+    driver: 'mssql'
+    useDbms: false
+    logConfig:
+      slowThresholdMS: 1000
+      level: 'debug'
+redis:
+  testRedis:
+    addr: '10.250.60.11:6379'
 logger:
   type: 'zap'
   Level: 'debug'

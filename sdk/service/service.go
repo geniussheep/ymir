@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"gitlab.benlai.work/go/ymir/storage/redis"
 
 	"gitlab.benlai.work/go/ymir/logger"
 	"gitlab.benlai.work/go/ymir/storage/db"
@@ -9,6 +10,7 @@ import (
 
 type Service struct {
 	Orm   map[string]*db.Yorm
+	Redis map[string]*redis.Redis
 	Log   *logger.Helper
 	Error error
 }

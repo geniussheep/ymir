@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"gitlab.benlai.work/go/ymir/sdk/common"
+	"gitlab.benlai.work/go/ymir/sdk/middleware"
 	"gitlab.benlai.work/go/ymir/sdk/storage/db"
 	"gitlab.benlai.work/go/ymir/sdk/storage/redis"
 	"log"
@@ -114,8 +115,18 @@ func setup(p *cli.Program) {
 		log.Fatal("not support other engine")
 		os.Exit(-1)
 	}
-	//r.Use(middleware.Metrics())
+
 	r.Use(api.SetRequestLogger)
+
+	if p.MiddleWareFuncArray != nil && len(p.MiddleWareFuncArray) > 0 {
+		for _, mwf := range p.MiddleWareFuncArray {
+			middleware.Append(mwf)
+		}
+	}
+
+	// 初始化中间件
+	middleware.InitMiddleware(r)
+
 	if p.AppRoutersScan != nil && len(p.AppRoutersScan) > 0 {
 		for _, srf := range p.AppRoutersScan {
 			srf()
