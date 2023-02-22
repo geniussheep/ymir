@@ -4,14 +4,18 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
 	"gitlab.benlai.work/go/ymir/logger"
+	"gitlab.benlai.work/go/ymir/sdk/api"
 	"gitlab.benlai.work/go/ymir/storage/cache"
 	"gitlab.benlai.work/go/ymir/storage/db"
 	"gitlab.benlai.work/go/ymir/storage/redis"
+	"log"
 	"net/http"
+	"os"
 	"sync"
 )
 
 type Application struct {
+	webApi      *api.Api
 	dbs         map[string]*db.Yorm
 	cache       cache.AdapterCache
 	redis       map[string]*redis.Redis
@@ -22,9 +26,10 @@ type Application struct {
 	mux         sync.RWMutex
 }
 
-// NewConfig 默认值
+// New 默认值
 func New() *Application {
 	return &Application{
+		webApi:      &api.Api{},
 		dbs:         make(map[string]*db.Yorm),
 		cache:       cache.NewMemoryCache(),
 		redis:       make(map[string]*redis.Redis),
@@ -32,6 +37,16 @@ func New() *Application {
 		middlewares: make(map[string]interface{}),
 		handler:     make(map[string][]func(r *gin.RouterGroup, hand ...*gin.HandlerFunc)),
 	}
+}
+
+// SetWebApi 设置webapi对象
+func (a *Application) SetWebApi(webapi *api.Api) {
+	a.webApi = webapi
+}
+
+// GetWebApi 获取webapi对象
+func (a *Application) GetWebApi() *api.Api {
+	return a.webApi
 }
 
 // SetEngine 设置路由引擎
@@ -42,6 +57,24 @@ func (a *Application) SetEngine(engine http.Handler) {
 // GetEngine 获取路由引擎
 func (a *Application) GetEngine() http.Handler {
 	return a.engine
+}
+
+// GetGinEngine 获取GinEngine路由引擎
+func (a *Application) GetGinEngine() *gin.Engine {
+	var r *gin.Engine
+	h := a.GetEngine()
+	if h == nil {
+		log.Fatal("not found engine...")
+		os.Exit(-1)
+	}
+	switch h.(type) {
+	case *gin.Engine:
+		r = h.(*gin.Engine)
+	default:
+		log.Fatal("not support other engine")
+		os.Exit(-1)
+	}
+	return r
 }
 
 // SetLogger 设置日志组件

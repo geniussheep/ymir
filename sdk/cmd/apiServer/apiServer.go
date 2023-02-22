@@ -103,11 +103,9 @@ func setup(p *cli.Program) {
 	}
 
 	var r *gin.Engine
-	h := sdk.Runtime.GetEngine()
-	if h == nil {
-		h = gin.New()
-		sdk.Runtime.SetEngine(h)
-	}
+	var h http.Handler
+	h = gin.New()
+	sdk.Runtime.SetEngine(h)
 	switch h.(type) {
 	case *gin.Engine:
 		r = h.(*gin.Engine)
@@ -132,4 +130,6 @@ func setup(p *cli.Program) {
 			srf()
 		}
 	}
+
+	sdk.Runtime.GetWebApi().RegisterRouters(r)
 }
