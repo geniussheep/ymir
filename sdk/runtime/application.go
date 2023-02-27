@@ -24,6 +24,7 @@ type Application struct {
 	handler     map[string][]func(r *gin.RouterGroup, hand ...*gin.HandlerFunc)
 	engine      http.Handler
 	mux         sync.RWMutex
+	other       map[string]interface{}
 }
 
 // New 默认值
@@ -109,12 +110,12 @@ func (a *Application) SetCasbin(key string, enforcer *casbin.SyncedEnforcer) {
 	a.casbins[key] = enforcer
 }
 
-func (a *Application) GetCasbin() map[string]*casbin.SyncedEnforcer {
+func (a *Application) GetAllCasbin() map[string]*casbin.SyncedEnforcer {
 	return a.casbins
 }
 
-// GetCasbinKey 根据key获取casbin
-func (a *Application) GetCasbinKey(key string) *casbin.SyncedEnforcer {
+// GetCasbin 根据key获取casbin
+func (a *Application) GetCasbin(key string) *casbin.SyncedEnforcer {
 	a.mux.Lock()
 	defer a.mux.Unlock()
 	if e, ok := a.casbins["*"]; ok {
@@ -136,4 +137,42 @@ func (a *Application) GetRedis(rName string) *redis.Redis {
 		return nil
 	}
 	return a.redis[rName]
+}
+
+// SetMiddleware 设置中间件
+func (a *Application) SetMiddleware(key string, middleware interface{}) {
+	a.mux.Lock()
+	defer a.mux.Unlock()
+	a.middlewares[key] = middleware
+}
+
+// GetAllMiddleware 获取所有中间件
+func (a *Application) GetAllMiddleware() map[string]interface{} {
+	return a.middlewares
+}
+
+// GetMiddleware 获取对应key的中间件
+func (a *Application) GetMiddleware(key string) interface{} {
+	a.mux.Lock()
+	defer a.mux.Unlock()
+	return a.middlewares[key]
+}
+
+// SetOtherComponent 设置其他组件实例
+func (a *Application) SetOtherComponent(key string, other interface{}) {
+	a.mux.Lock()
+	defer a.mux.Unlock()
+	a.other[key] = other
+}
+
+// GetAllOtherComponent 设置所有其他组件实例
+func (a *Application) GetAllOtherComponent() map[string]interface{} {
+	return a.other
+}
+
+// GetOtherComponent 获取对应key的组件
+func (a *Application) GetOtherComponent(key string) interface{} {
+	a.mux.Lock()
+	defer a.mux.Unlock()
+	return a.other[key]
 }

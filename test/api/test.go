@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"gitlab.benlai.work/go/ymir/sdk/api"
@@ -70,4 +71,33 @@ func (api Test) GetApplication(c *gin.Context) {
 		return
 	}
 	api.OK(objects, "get application success")
+}
+
+// CreateByAppId 创建Jenkins编译任务
+// @Summary 创建Jenkins编译任务
+// @Description 创建Jenkins编译任务
+// @Tags Jenkins应用编译任务管理
+// @Param appId path string true "应用Id"
+// @Param deployType formData string true "任务类型 [Normal:完整发布, BuildImage:制作镜像, GoLive:应用上线, RestartApp:重启发布, Config:配置发布, ConfigRestart:配置发布, ConfigWithoutRestart:配置发布, QuicklyDeploy:快速部署, QuicklyRollback:快速回滚, Rollback:Rollback]"
+// @Param environment formData string true "环境"
+// @Param isAutoPublish formData bool false "是否全自动发布"
+// @Success 200 {object} response.Response{data=string} "{"code": 200, "data": [...]}"
+// @Router /api/v1/app/id/{appId}/build/create [post]
+// @Security Bearer
+func (api Test) CreateByAppId(c *gin.Context) {
+	req := dto.CreateBuild{}
+	s := service.Test{}
+	err := api.MakeContext(c).
+		Bind(&req).
+		Bind(&req, binding.Query).
+		Bind(&req, binding.Form).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		api.Logger.Error(err)
+		api.Error(500, err, err.Error())
+		return
+	}
+
+	api.OK(req, fmt.Sprintf("test create app build job by appId:%s success", req.AppId))
 }

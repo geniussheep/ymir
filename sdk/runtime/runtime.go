@@ -26,10 +26,19 @@ type Runtime interface {
 	GetDb(dbName string) *db.Yorm
 
 	SetCasbin(key string, enforcer *casbin.SyncedEnforcer)
-	GetCasbin() map[string]*casbin.SyncedEnforcer
-	GetCasbinKey(key string) *casbin.SyncedEnforcer
+	GetAllCasbin() map[string]*casbin.SyncedEnforcer
+	GetCasbin(key string) *casbin.SyncedEnforcer
 
 	// redis
 	SetRedis(rName string, redis *redis.Redis)
 	GetRedis(rName string) *redis.Redis
+
+	// SetMiddleware middleware
+	SetMiddleware(string, interface{})
+	GetAllMiddleware() map[string]interface{}
+	GetMiddleware(key string) interface{}
+
+	SetOtherComponent(string, interface{})
+	GetAllOtherComponent() map[string]interface{}
+	GetOtherComponent(key string) interface{}
 }
