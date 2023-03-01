@@ -37,6 +37,7 @@ func New() *Application {
 		casbins:     make(map[string]*casbin.SyncedEnforcer),
 		middlewares: make(map[string]interface{}),
 		handler:     make(map[string][]func(r *gin.RouterGroup, hand ...*gin.HandlerFunc)),
+		other:       make(map[string]interface{}),
 	}
 }
 
