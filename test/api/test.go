@@ -36,6 +36,7 @@ func (api Test) Get(c *gin.Context) {
 		api.Error(500, err, err.Error())
 		return
 	}
+
 	resp := model.RespTest{QueryTest: req, RespBody: "yangyangbody", RespType: "yangyang--respType"}
 	api.OK(resp, "test get")
 }
@@ -45,18 +46,21 @@ func (api Test) Get(c *gin.Context) {
 // @Description 获取App信息
 // @Tags 应用信息管理
 // @Param appId path int false "应用Id"
+// @Param environment path string false "应用环境"
 // @Success 200 {object} response.Response{data=[]model.Application} "{"code": 200, "data": [...]}"
-// @Router /api/v1/app/get/{appId} [get]
+// @Router /api/v1/app/get/{appId}/{environment} [get]
 // @Security Bearer
 func (api Test) GetApplication(c *gin.Context) {
-	req := dto.QueryByAppId{}
+	req := dto.QueryApp{}
 	s := service.Test{}
 	err := api.MakeContext(c).
+		Bind(&req).
 		MakeOrm(common.DbMonitor).
 		MakeRedis(common.TestRedis).
-		Bind(&req).
+		MakeZookeeper(common.GetZkName(req.Environment)).
 		MakeService(&s.Service).
 		Errors
+
 	if err != nil {
 		api.Error(500, err, err.Error())
 		return

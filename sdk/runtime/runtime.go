@@ -3,6 +3,7 @@ package runtime
 import (
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
+	"gitlab.benlai.work/go/ymir/component/zookeeper"
 	"gitlab.benlai.work/go/ymir/logger"
 	"gitlab.benlai.work/go/ymir/sdk/api"
 	"gitlab.benlai.work/go/ymir/storage/db"
@@ -32,6 +33,10 @@ type Runtime interface {
 	// redis
 	SetRedis(rName string, redis *redis.Redis)
 	GetRedis(rName string) *redis.Redis
+
+	// zookeeper
+	SetZookeeper(zkName string, zk *zookeeper.Zookeeper)
+	GetZookeeper(zkName string) *zookeeper.Zookeeper
 
 	// SetMiddleware middleware
 	SetMiddleware(string, interface{})

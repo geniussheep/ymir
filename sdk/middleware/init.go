@@ -9,6 +9,7 @@ var (
 func AppendDefault() {
 	middlewares = append(middlewares, WithContextDb)
 	middlewares = append(middlewares, WithContextRedis)
+	middlewares = append(middlewares, WithContextZookeeper)
 	middlewares = append(middlewares, CustomError)
 	middlewares = append(middlewares, CORS)
 }

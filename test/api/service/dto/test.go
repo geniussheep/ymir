@@ -2,11 +2,12 @@ package dto
 
 import "gitlab.benlai.work/go/ymir/sdk/pkg"
 
-type QueryByAppId struct {
-	AppId int `msgpack:"appId" json:"appId" form:"appId" xml:"appId" uri:"appId"  binding:"required" example:"1"`
+type QueryApp struct {
+	AppId       int    `msgpack:"appId" json:"appId" form:"appId" xml:"appId" uri:"appId"  binding:"required" example:"1"`
+	Environment string `msgpack:"environment" json:"environment" form:"environment" uri:"environment" xml:"environment" example:"branch"`
 }
 
-func (q *QueryByAppId) CheckArgs() error {
+func (q *QueryApp) CheckArgs() error {
 	return pkg.CheckIntArgs("appId", q.AppId)
 }
 

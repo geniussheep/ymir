@@ -14,7 +14,7 @@ type Test struct {
 	service.Service
 }
 
-func (s *Test) GetApplication(q *dto.QueryByAppId) (*model.Application, error) {
+func (s *Test) GetApplication(q *dto.QueryApp) (*model.Application, error) {
 	if err := q.CheckArgs(); err != nil {
 		return nil, err
 	}
@@ -32,6 +32,10 @@ func (s *Test) GetApplication(q *dto.QueryByAppId) (*model.Application, error) {
 		return nil, err
 	}
 	s.Redis[common.TestRedis].Set("TestApp", string(rd))
+	err = s.Zookeeper[common.GetZkName(q.Environment)].Notify("/application/base", nil)
+	if err != nil {
+		return nil, err
+	}
 
 	testModel, err := s.Redis[common.TestRedis].Get("TestApp")
 	if err != nil {

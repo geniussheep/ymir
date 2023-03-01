@@ -3,6 +3,7 @@ package runtime
 import (
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
+	"gitlab.benlai.work/go/ymir/component/zookeeper"
 	"gitlab.benlai.work/go/ymir/logger"
 	"gitlab.benlai.work/go/ymir/sdk/api"
 	"gitlab.benlai.work/go/ymir/storage/cache"
@@ -19,6 +20,7 @@ type Application struct {
 	dbs         map[string]*db.Yorm
 	cache       cache.AdapterCache
 	redis       map[string]*redis.Redis
+	zookeeper   map[string]*zookeeper.Zookeeper
 	casbins     map[string]*casbin.SyncedEnforcer
 	middlewares map[string]interface{}
 	handler     map[string][]func(r *gin.RouterGroup, hand ...*gin.HandlerFunc)
@@ -34,6 +36,7 @@ func New() *Application {
 		dbs:         make(map[string]*db.Yorm),
 		cache:       cache.NewMemoryCache(),
 		redis:       make(map[string]*redis.Redis),
+		zookeeper:   make(map[string]*zookeeper.Zookeeper),
 		casbins:     make(map[string]*casbin.SyncedEnforcer),
 		middlewares: make(map[string]interface{}),
 		handler:     make(map[string][]func(r *gin.RouterGroup, hand ...*gin.HandlerFunc)),
@@ -138,6 +141,22 @@ func (a *Application) GetRedis(rName string) *redis.Redis {
 		return nil
 	}
 	return a.redis[rName]
+}
+
+func (a *Application) SetZookeeper(zkName string, zk *zookeeper.Zookeeper) {
+	a.mux.Lock()
+	defer a.mux.Unlock()
+	a.zookeeper[zkName] = zk
+}
+
+// GetZookeeper 获取所有map里的Zk数据
+func (a *Application) GetZookeeper(zkName string) *zookeeper.Zookeeper {
+	a.mux.Lock()
+	defer a.mux.Unlock()
+	if _, ok := a.zookeeper[zkName]; !ok {
+		return nil
+	}
+	return a.zookeeper[zkName]
 }
 
 // SetMiddleware 设置中间件

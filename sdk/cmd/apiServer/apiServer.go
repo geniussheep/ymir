@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"gitlab.benlai.work/go/ymir/sdk/common"
+	"gitlab.benlai.work/go/ymir/sdk/component/zookeeper"
 	"gitlab.benlai.work/go/ymir/sdk/middleware"
 	"gitlab.benlai.work/go/ymir/sdk/storage/db"
 	"gitlab.benlai.work/go/ymir/sdk/storage/redis"
@@ -96,7 +97,7 @@ func run(p *cli.Program) error {
 func setup(p *cli.Program) {
 	config.ExtendConfig = p.ExtendConfig
 
-	config.Setup(p.ConfigFilePath, db.Setup, redis.Setup)
+	config.Setup(p.ConfigFilePath, db.Setup, redis.Setup, zookeeper.Setup)
 
 	for _, sf := range p.InitFuncArray {
 		sf()

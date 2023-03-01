@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"gitlab.benlai.work/go/ymir/component/zookeeper"
 	"gitlab.benlai.work/go/ymir/storage/redis"
 
 	"gitlab.benlai.work/go/ymir/logger"
@@ -9,10 +10,11 @@ import (
 )
 
 type Service struct {
-	Orm   map[string]*db.Yorm
-	Redis map[string]*redis.Redis
-	Log   *logger.Helper
-	Error error
+	Orm       map[string]*db.Yorm
+	Redis     map[string]*redis.Redis
+	Zookeeper map[string]*zookeeper.Zookeeper
+	Log       *logger.Helper
+	Error     error
 }
 
 func (svc *Service) AddError(err error) error {

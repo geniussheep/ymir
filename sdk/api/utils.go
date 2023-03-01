@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"gitlab.benlai.work/go/ymir/component/zookeeper"
 	"gitlab.benlai.work/go/ymir/storage/db"
 	"gitlab.benlai.work/go/ymir/storage/redis"
 	"strings"
@@ -35,5 +36,20 @@ func GetRedis(ctx *gin.Context, redisName string) (*redis.Redis, error) {
 		return _redis.(*redis.Redis).WithContext(ctx), nil
 	default:
 		return nil, fmt.Errorf("the redis:%s connect not exist", redisName)
+	}
+}
+
+// GetZookeeper 获取zookeeper连接
+func GetZookeeper(ctx *gin.Context, zkName string) (*zookeeper.Zookeeper, error) {
+	_zk, exist := ctx.Get(strings.ToLower(zkName))
+	if !exist {
+		return nil, fmt.Errorf("the zk:%s connect not exist", zkName)
+	}
+	switch _zk.(type) {
+	case *zookeeper.Zookeeper:
+		//新增操作
+		return _zk.(*zookeeper.Zookeeper), nil
+	default:
+		return nil, fmt.Errorf("the zk:%s connect not exist", zkName)
 	}
 }

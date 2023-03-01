@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"gitlab.benlai.work/go/ymir/component/zookeeper"
 	"gitlab.benlai.work/go/ymir/sdk/api/response"
 	"gitlab.benlai.work/go/ymir/sdk/config"
 	"gitlab.benlai.work/go/ymir/sdk/pkg"
@@ -17,12 +18,13 @@ import (
 )
 
 type Api struct {
-	Context *gin.Context
-	Logger  *logger.Helper
-	Orm     map[string]*db.Yorm
-	Redis   map[string]*redis.Redis
-	Routers map[string][]RouterEntry
-	Errors  error
+	Context   *gin.Context
+	Logger    *logger.Helper
+	Orm       map[string]*db.Yorm
+	Redis     map[string]*redis.Redis
+	Zookeeper map[string]*zookeeper.Zookeeper
+	Routers   map[string][]RouterEntry
+	Errors    error
 }
 
 func (api *Api) AddError(err error) {
@@ -117,10 +119,26 @@ func (api *Api) MakeRedis(redisName string) *Api {
 	return api
 }
 
+func (api *Api) MakeZookeeper(zkName string) *Api {
+	if api.Zookeeper == nil {
+		api.Zookeeper = make(map[string]*zookeeper.Zookeeper)
+	}
+	if _, ok := api.Zookeeper[zkName]; ok {
+		return api
+	}
+	zk, err := GetZookeeper(api.Context, zkName)
+	if err != nil {
+		api.AddError(fmt.Errorf("set zk:[name: %s] error: %s", zkName, err))
+	}
+	api.Zookeeper[zkName] = zk
+	return api
+}
+
 func (api *Api) MakeService(svc *service.Service) *Api {
 	svc.Log = api.Logger
 	svc.Orm = api.Orm
 	svc.Redis = api.Redis
+	svc.Zookeeper = api.Zookeeper
 	return api
 }
 

@@ -19,11 +19,12 @@ var (
 
 // Setting 配置集合
 type Setting struct {
-	Application *Application          `yaml:"application"`
-	Logger      *Logger               `yaml:"logger"`
-	Databases   *map[string]*Database `yaml:"databases"`
-	Redis       *map[string]*Redis    `yaml:"redis"`
-	Extend      any                   `yaml:"extend"`
+	Application *Application           `yaml:"application"`
+	Logger      *Logger                `yaml:"logger"`
+	Databases   *map[string]*Database  `yaml:"databases"`
+	Redis       *map[string]*Redis     `yaml:"redis"`
+	Zookeeper   *map[string]*Zookeeper `yaml:"zookeeper"`
+	Extend      any                    `yaml:"extend"`
 	callbacks   []func()
 }
 
@@ -117,6 +118,7 @@ func Setup(configPath string, cbs ...func()) {
 		Logger:      LoggerConfig,
 		Databases:   &DatabaseConfig,
 		Redis:       &RedisConfig,
+		Zookeeper:   &ZookeeperConfig,
 		Extend:      ExtendConfig,
 		callbacks:   cbs,
 	}
