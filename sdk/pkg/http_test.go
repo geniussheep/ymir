@@ -24,9 +24,19 @@ type ApplicationCicdResponse struct {
 	Data []ApplicationCicd `json:"data"`
 }
 
+type PostAPIResult[T any] struct {
+	Status int    `json:"status"`
+	Info   string `json:"info,omitempty"`
+	Data   T      `json:"data,omitempty"`
+}
+
 func TestGet(t *testing.T) {
-	var res ApplicationCicdResponse
-	GetJson("http://127.0.0.1:9090/api/v1/appcicd/get/5031", nil, nil, &res)
+	var res PostAPIResult[ApplicationCicdResponse]
+	err := GetJson("http://tapd-api.benlai.com/api/v1/story/gets?workspace_id=63699230&id=1163699230001042105", nil, nil, &res)
+	if err != nil {
+		fmt.Printf("%v", err)
+		return
+	}
 	fmt.Printf("%v\r\n", res)
 
 	resStr, err := GetString("http://127.0.0.1:9090/api/v1/appcicd/get/5031", nil, nil)
