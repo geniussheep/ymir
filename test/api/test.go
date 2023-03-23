@@ -20,17 +20,16 @@ type Test struct {
 // @Description 测试Controller
 // @Tags 测试Controller
 // @Param pathArgs path string false "url内参数"
-// @Param queryString formData string false "字符串, 如:string"
-// @Param queryInt formData int false "数字 如:123"
+// @Param qString query string false "字符串, 如:string"
+// @Param qInt body int false "数字 如:123"
 // @Success 200 {object} response.Response{data=[]model.RespTest} "{"code": 200, "data": [...]}"
 // @Router /api/v1/test/{pathArgs}/get [get]
 // @Security Bearer
 func (api Test) Get(c *gin.Context) {
 	req := model.QueryTest{}
 	err := api.MakeContext(c).
-		MakeOrm("benlaimonitor").
 		Bind(&req).
-		Bind(&req, binding.Query, binding.Form, binding.JSON).
+		Bind(&req, binding.Query, binding.JSON).
 		Errors
 	if err != nil {
 		api.Error(500, err, err.Error())
