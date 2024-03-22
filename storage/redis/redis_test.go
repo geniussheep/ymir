@@ -1,7 +1,7 @@
 package redis
 
 import (
-	"gitlab.benlai.work/go/ymir/logger"
+	"github.com/geniussheep/ymir/logger"
 	"testing"
 )
 

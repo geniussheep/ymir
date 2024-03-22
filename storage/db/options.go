@@ -10,15 +10,13 @@ type Option func(*options)
 type options struct {
 	Dsn       string
 	Driver    string
-	UseDbms   bool
 	logConfig logger.Config
 }
 
 func setDefault() options {
 	return options{
-		Dsn:     "",
-		Driver:  "",
-		UseDbms: false,
+		Dsn:    "",
+		Driver: "",
 		logConfig: logger.Config{
 			SlowThreshold:             time.Second,   // Slow SQL threshold
 			LogLevel:                  logger.Silent, // Log level
@@ -37,12 +35,6 @@ func SetDsn(dsn string) Option {
 func SetDriver(driver string) Option {
 	return func(o *options) {
 		o.Driver = driver
-	}
-}
-
-func SetUseDbms(b bool) Option {
-	return func(o *options) {
-		o.UseDbms = b
 	}
 }
 

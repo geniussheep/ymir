@@ -2,19 +2,19 @@ package api
 
 import (
 	"fmt"
+	"github.com/geniussheep/ymir/component/zookeeper"
+	"github.com/geniussheep/ymir/sdk/api/response"
+	"github.com/geniussheep/ymir/sdk/config"
+	"github.com/geniussheep/ymir/sdk/pkg"
+	"github.com/geniussheep/ymir/sdk/service"
+	"github.com/geniussheep/ymir/storage/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"gitlab.benlai.work/go/ymir/component/zookeeper"
-	"gitlab.benlai.work/go/ymir/sdk/api/response"
-	"gitlab.benlai.work/go/ymir/sdk/config"
-	"gitlab.benlai.work/go/ymir/sdk/pkg"
-	"gitlab.benlai.work/go/ymir/sdk/service"
-	"gitlab.benlai.work/go/ymir/storage/redis"
 	"net/http"
 	"strings"
 
-	"gitlab.benlai.work/go/ymir/logger"
-	"gitlab.benlai.work/go/ymir/storage/db"
+	"github.com/geniussheep/ymir/logger"
+	"github.com/geniussheep/ymir/storage/db"
 )
 
 type Api struct {

@@ -1,9 +1,9 @@
 package middleware
 
 import (
+	"github.com/geniussheep/ymir/sdk"
+	"github.com/geniussheep/ymir/sdk/config"
 	"github.com/gin-gonic/gin"
-	"gitlab.benlai.work/go/ymir/sdk"
-	"gitlab.benlai.work/go/ymir/sdk/config"
 )
 
 func WithContextRedis(c *gin.Context) {

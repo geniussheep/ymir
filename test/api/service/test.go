@@ -3,11 +3,11 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/geniussheep/ymir/sdk/service"
+	"github.com/geniussheep/ymir/test/api/model"
+	"github.com/geniussheep/ymir/test/api/service/dto"
+	"github.com/geniussheep/ymir/test/common"
 	"github.com/spf13/cast"
-	"gitlab.benlai.work/go/ymir/sdk/service"
-	"gitlab.benlai.work/go/ymir/test/api/model"
-	"gitlab.benlai.work/go/ymir/test/api/service/dto"
-	"gitlab.benlai.work/go/ymir/test/common"
 )
 
 type Test struct {

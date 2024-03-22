@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
 
-	loggerCore "gitlab.benlai.work/go/ymir/logger"
+	loggerCore "github.com/geniussheep/ymir/logger"
 )
 
 type gormLogger struct {

@@ -3,10 +3,10 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/geniussheep/ymir/cli"
+	"github.com/geniussheep/ymir/sdk/common"
+	"github.com/geniussheep/ymir/sdk/config"
 	"github.com/spf13/cobra"
-	"gitlab.benlai.work/go/ymir/cli"
-	"gitlab.benlai.work/go/ymir/sdk/common"
-	"gitlab.benlai.work/go/ymir/sdk/config"
 )
 
 type configFlag struct {

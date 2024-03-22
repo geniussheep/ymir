@@ -1,7 +1,7 @@
 package db
 
 import (
-	"gitlab.benlai.work/go/ymir/logger"
+	"github.com/geniussheep/ymir/logger"
 	dbLogger "gorm.io/gorm/logger"
 	"testing"
 )

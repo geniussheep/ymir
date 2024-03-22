@@ -2,7 +2,7 @@ package pkg
 
 import (
 	"fmt"
-	"gitlab.benlai.work/go/ymir/sdk/api/response"
+	"github.com/geniussheep/ymir/sdk/api/response"
 	"testing"
 )
 

@@ -2,10 +2,10 @@ package api
 
 import (
 	"fmt"
+	"github.com/geniussheep/ymir/component/zookeeper"
+	"github.com/geniussheep/ymir/storage/db"
+	"github.com/geniussheep/ymir/storage/redis"
 	"github.com/gin-gonic/gin"
-	"gitlab.benlai.work/go/ymir/component/zookeeper"
-	"gitlab.benlai.work/go/ymir/storage/db"
-	"gitlab.benlai.work/go/ymir/storage/redis"
 	"strings"
 )
 

@@ -2,9 +2,9 @@ package config
 
 import "C"
 import (
-	"gitlab.benlai.work/go/ymir/config"
-	"gitlab.benlai.work/go/ymir/logger"
-	"gitlab.benlai.work/go/ymir/sdk/common"
+	"github.com/geniussheep/ymir/config"
+	"github.com/geniussheep/ymir/logger"
+	"github.com/geniussheep/ymir/sdk/common"
 	"os"
 	"path/filepath"
 	"sync"

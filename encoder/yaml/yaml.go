@@ -1,7 +1,7 @@
 package yaml
 
 import (
-	"gitlab.benlai.work/go/ymir/encoder"
+	"github.com/geniussheep/ymir/encoder"
 	"gopkg.in/yaml.v3"
 )
 

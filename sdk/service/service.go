@@ -2,11 +2,11 @@ package service
 
 import (
 	"fmt"
-	"gitlab.benlai.work/go/ymir/component/zookeeper"
-	"gitlab.benlai.work/go/ymir/storage/redis"
+	"github.com/geniussheep/ymir/component/zookeeper"
+	"github.com/geniussheep/ymir/storage/redis"
 
-	"gitlab.benlai.work/go/ymir/logger"
-	"gitlab.benlai.work/go/ymir/storage/db"
+	"github.com/geniussheep/ymir/logger"
+	"github.com/geniussheep/ymir/storage/db"
 )
 
 type Service struct {

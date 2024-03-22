@@ -2,9 +2,9 @@ package version
 
 import (
 	"fmt"
+	"github.com/geniussheep/ymir/cli"
+	"github.com/geniussheep/ymir/sdk/common"
 	"github.com/spf13/cobra"
-	"gitlab.benlai.work/go/ymir/cli"
-	"gitlab.benlai.work/go/ymir/sdk/common"
 )
 
 type versionFlag struct {

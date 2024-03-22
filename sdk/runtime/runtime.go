@@ -2,12 +2,12 @@ package runtime
 
 import (
 	"github.com/casbin/casbin/v2"
+	"github.com/geniussheep/ymir/component/zookeeper"
+	"github.com/geniussheep/ymir/logger"
+	"github.com/geniussheep/ymir/sdk/api"
+	"github.com/geniussheep/ymir/storage/db"
+	"github.com/geniussheep/ymir/storage/redis"
 	"github.com/gin-gonic/gin"
-	"gitlab.benlai.work/go/ymir/component/zookeeper"
-	"gitlab.benlai.work/go/ymir/logger"
-	"gitlab.benlai.work/go/ymir/sdk/api"
-	"gitlab.benlai.work/go/ymir/storage/db"
-	"gitlab.benlai.work/go/ymir/storage/redis"
 	"net/http"
 )
 

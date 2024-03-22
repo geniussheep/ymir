@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"fmt"
-	"gitlab.benlai.work/go/ymir/sdk/pkg"
+	"github.com/geniussheep/ymir/sdk/pkg"
 	"net/http"
 	"strconv"
 	"strings"

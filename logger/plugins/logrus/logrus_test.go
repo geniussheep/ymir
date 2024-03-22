@@ -7,7 +7,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"gitlab.benlai.work/go/ymir/logger"
+	"github.com/geniussheep/ymir/logger"
 )
 
 func TestName(t *testing.T) {

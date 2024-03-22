@@ -3,7 +3,7 @@ package zap
 import (
 	"context"
 	"fmt"
-	"gitlab.benlai.work/go/ymir/logger"
+	"github.com/geniussheep/ymir/logger"
 	"os"
 	"sync"
 

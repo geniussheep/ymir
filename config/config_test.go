@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"gitlab.benlai.work/go/ymir/sdk/common"
+	"github.com/geniussheep/ymir/sdk/common"
 	"testing"
 )
 

@@ -2,7 +2,7 @@ package xml
 
 import (
 	"encoding/xml"
-	"gitlab.benlai.work/go/ymir/encoder"
+	"github.com/geniussheep/ymir/encoder"
 )
 
 type xmlEncoder struct{}

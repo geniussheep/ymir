@@ -1,6 +1,6 @@
 package config
 
-import "gitlab.benlai.work/go/ymir/sdk/pkg/logger"
+import "github.com/geniussheep/ymir/sdk/pkg/logger"
 
 type Logger struct {
 	Type   string `yaml:"type" mapstructure:"type"`

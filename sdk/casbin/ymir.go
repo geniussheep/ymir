@@ -4,7 +4,7 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/log"
 	"github.com/casbin/casbin/v2/model"
-	gormCasbinAdapter "gitlab.benlai.work/go/ymir/adapter/gorm"
+	gormCasbinAdapter "github.com/geniussheep/ymir/adapter/gorm"
 	"gorm.io/gorm"
 )
 

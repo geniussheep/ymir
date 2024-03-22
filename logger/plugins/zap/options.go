@@ -6,7 +6,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"gitlab.benlai.work/go/ymir/logger"
+	"github.com/geniussheep/ymir/logger"
 )
 
 type Options struct {

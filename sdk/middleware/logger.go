@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"bytes"
+	"github.com/geniussheep/ymir/logger"
 	"github.com/gin-gonic/gin"
-	"gitlab.benlai.work/go/ymir/logger"
 	"io"
 	"io/ioutil"
 	"net/http"

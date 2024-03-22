@@ -1,8 +1,8 @@
 package response
 
 import (
+	"github.com/geniussheep/ymir/sdk/api/request"
 	"github.com/gin-gonic/gin"
-	"gitlab.benlai.work/go/ymir/sdk/api/request"
 	"net/http"
 )
 

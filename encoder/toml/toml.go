@@ -2,7 +2,7 @@ package toml
 
 import (
 	"bytes"
-	"gitlab.benlai.work/go/ymir/encoder"
+	"github.com/geniussheep/ymir/encoder"
 
 	"github.com/BurntSushi/toml"
 )

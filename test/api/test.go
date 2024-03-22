@@ -2,13 +2,13 @@ package api
 
 import (
 	"fmt"
+	"github.com/geniussheep/ymir/sdk/api"
+	"github.com/geniussheep/ymir/test/api/model"
+	"github.com/geniussheep/ymir/test/api/service"
+	"github.com/geniussheep/ymir/test/api/service/dto"
+	"github.com/geniussheep/ymir/test/common"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"gitlab.benlai.work/go/ymir/sdk/api"
-	"gitlab.benlai.work/go/ymir/test/api/model"
-	"gitlab.benlai.work/go/ymir/test/api/service"
-	"gitlab.benlai.work/go/ymir/test/api/service/dto"
-	"gitlab.benlai.work/go/ymir/test/common"
 )
 
 type Test struct {

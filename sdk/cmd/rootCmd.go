@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/geniussheep/ymir/cli"
+	"github.com/geniussheep/ymir/sdk/cmd/apiServer"
+	"github.com/geniussheep/ymir/sdk/cmd/config"
+	"github.com/geniussheep/ymir/sdk/cmd/version"
+	"github.com/geniussheep/ymir/sdk/pkg"
 	"github.com/spf13/cobra"
-	"gitlab.benlai.work/go/ymir/cli"
-	"gitlab.benlai.work/go/ymir/sdk/cmd/apiServer"
-	"gitlab.benlai.work/go/ymir/sdk/cmd/config"
-	"gitlab.benlai.work/go/ymir/sdk/cmd/version"
-	"gitlab.benlai.work/go/ymir/sdk/pkg"
 	"os"
 )
 

@@ -1,11 +1,11 @@
 package logger
 
 import (
-	"gitlab.benlai.work/go/ymir/debug/writer"
-	"gitlab.benlai.work/go/ymir/logger"
-	log "gitlab.benlai.work/go/ymir/logger"
-	"gitlab.benlai.work/go/ymir/logger/plugins/zap"
-	"gitlab.benlai.work/go/ymir/sdk/pkg"
+	"github.com/geniussheep/ymir/debug/writer"
+	"github.com/geniussheep/ymir/logger"
+	log "github.com/geniussheep/ymir/logger"
+	"github.com/geniussheep/ymir/logger/plugins/zap"
+	"github.com/geniussheep/ymir/sdk/pkg"
 	"io"
 	"os"
 )

@@ -2,11 +2,11 @@ package redis
 
 import (
 	"fmt"
-	"gitlab.benlai.work/go/ymir/logger"
-	"gitlab.benlai.work/go/ymir/sdk"
-	"gitlab.benlai.work/go/ymir/sdk/config"
-	"gitlab.benlai.work/go/ymir/sdk/pkg"
-	"gitlab.benlai.work/go/ymir/storage/redis"
+	"github.com/geniussheep/ymir/logger"
+	"github.com/geniussheep/ymir/sdk"
+	"github.com/geniussheep/ymir/sdk/config"
+	"github.com/geniussheep/ymir/sdk/pkg"
+	"github.com/geniussheep/ymir/storage/redis"
 	"os"
 )
 

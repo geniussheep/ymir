@@ -3,7 +3,7 @@ package casbin
 import (
 	"sync/atomic"
 
-	"gitlab.benlai.work/go/ymir/logger"
+	"github.com/geniussheep/ymir/logger"
 )
 
 // Logger is the implementation for a Logger using golang log.

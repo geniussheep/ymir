@@ -2,14 +2,14 @@ package db
 
 import (
 	"fmt"
-	"gitlab.benlai.work/go/ymir/sdk"
-	"gitlab.benlai.work/go/ymir/sdk/config"
-	"gitlab.benlai.work/go/ymir/sdk/pkg"
+	"github.com/geniussheep/ymir/sdk"
+	"github.com/geniussheep/ymir/sdk/config"
+	"github.com/geniussheep/ymir/sdk/pkg"
 	"os"
 	"time"
 
-	"gitlab.benlai.work/go/ymir/logger"
-	"gitlab.benlai.work/go/ymir/storage/db"
+	"github.com/geniussheep/ymir/logger"
+	"github.com/geniussheep/ymir/storage/db"
 
 	dbLogger "gorm.io/gorm/logger"
 )
@@ -41,7 +41,6 @@ func Setup() {
 		yorm, err := db.New(
 			db.SetDsn(cfg.Dsn),
 			db.SetDriver(cfg.Driver),
-			db.SetUseDbms(cfg.UseDbms),
 			db.SetLogLevel(getLogLevel(cfg.LogConfig.LogLevel)),
 			db.SetLogColorful(cfg.LogConfig.Colorful),
 			db.SetLogIgnoreRecordNotFoundError(cfg.LogConfig.IgnoreRecordNotFoundError),

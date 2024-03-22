@@ -2,9 +2,9 @@ package api
 
 import (
 	"bytes"
+	"github.com/geniussheep/ymir/logger"
+	"github.com/geniussheep/ymir/sdk/api/request"
 	"github.com/gin-gonic/gin"
-	"gitlab.benlai.work/go/ymir/logger"
-	"gitlab.benlai.work/go/ymir/sdk/api/request"
 	"io"
 	"io/ioutil"
 	"net/http"

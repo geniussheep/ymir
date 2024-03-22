@@ -1,6 +1,6 @@
 package dto
 
-import "gitlab.benlai.work/go/ymir/sdk/pkg"
+import "github.com/geniussheep/ymir/sdk/pkg"
 
 type QueryApp struct {
 	AppId       int    `msgpack:"appId" json:"appId" form:"appId" xml:"appId" uri:"appId"  binding:"required" example:"1"`

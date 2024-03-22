@@ -1,9 +1,9 @@
 package router
 
 import (
-	"gitlab.benlai.work/go/ymir/sdk"
-	ymirApi "gitlab.benlai.work/go/ymir/sdk/api"
-	testApi "gitlab.benlai.work/go/ymir/test/api"
+	"github.com/geniussheep/ymir/sdk"
+	ymirApi "github.com/geniussheep/ymir/sdk/api"
+	testApi "github.com/geniussheep/ymir/test/api"
 )
 
 func init() {

@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	dlog "gitlab.benlai.work/go/ymir/debug/log"
+	dlog "github.com/geniussheep/ymir/debug/log"
 )
 
 var (

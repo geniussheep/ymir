@@ -3,7 +3,7 @@ package websocket
 import (
 	"context"
 	"fmt"
-	"gitlab.benlai.work/go/ymir/sdk/pkg"
+	"github.com/geniussheep/ymir/sdk/pkg"
 	"log"
 	"net/http"
 	"sync"

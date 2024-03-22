@@ -2,7 +2,7 @@ package json
 
 import (
 	"encoding/json"
-	"gitlab.benlai.work/go/ymir/encoder"
+	"github.com/geniussheep/ymir/encoder"
 )
 
 type jsonEncoder struct{}

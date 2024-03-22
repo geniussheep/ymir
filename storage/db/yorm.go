@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gitlab.benlai.work/go/dbms"
-
 	"gorm.io/gorm"
 
 	// driver
@@ -52,20 +50,6 @@ func New(opts ...Option) (*Yorm, error) {
 		return nil, fmt.Errorf("db args:Dsn is empty")
 	}
 
-	if !op.UseDbms && len(op.Driver) <= 0 {
-		return nil, fmt.Errorf("db args:Driver is empty")
-	}
-
-	if op.UseDbms {
-		dbmsClient := dbms.NewClient()
-		driver, dsn, err := dbmsClient.GetConnectionString(op.Dsn)
-		op.Dsn = dsn
-		op.Driver = driver
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	r := &Yorm{
 		dsn:    op.Dsn,
 		driver: Driver(op.Driver),
@@ -106,7 +90,18 @@ func New(opts ...Option) (*Yorm, error) {
 	return r, nil
 }
 
+func (r *Yorm) CheckIsInit() error {
+	if r == nil || r.db == nil {
+		return errors.New("yorm is not init，please check code")
+	}
+	return nil
+}
+
 func (r *Yorm) Init(models ...interface{}) error {
+	if err := r.CheckIsInit(); err != nil {
+		return err
+	}
+
 	if models == nil || len(models) == 0 {
 		return errors.New("model is missing")
 	}
@@ -119,6 +114,10 @@ func (r *Yorm) Init(models ...interface{}) error {
 }
 
 func (r *Yorm) FindOne(id int64, model interface{}) error {
+	if err := r.CheckIsInit(); err != nil {
+		return err
+	}
+
 	if id <= 0 {
 		return errors.New("id is invalid")
 	}
@@ -128,16 +127,26 @@ func (r *Yorm) FindOne(id int64, model interface{}) error {
 	return nil
 }
 
-func (r *Yorm) First(model interface{}) {
+func (r *Yorm) First(model interface{}) error {
+	if err := r.CheckIsInit(); err != nil {
+		return err
+	}
 	r.db.First(model)
+	return nil
 }
 
-func (r *Yorm) Last(model interface{}) {
+func (r *Yorm) Last(model interface{}) error {
+	if err := r.CheckIsInit(); err != nil {
+		return err
+	}
 	r.db.Last(model)
+	return nil
 }
 
 func (r *Yorm) FindAll(models interface{}) error {
-
+	if err := r.CheckIsInit(); err != nil {
+		return err
+	}
 	if err := r.db.Find(models).Error; err != nil {
 		return err
 	}
@@ -146,7 +155,9 @@ func (r *Yorm) FindAll(models interface{}) error {
 }
 
 func (r *Yorm) FindByQuery(where interface{}, models interface{}) error {
-
+	if err := r.CheckIsInit(); err != nil {
+		return err
+	}
 	db, err := BuildWhere(r.db, where)
 	if err != nil {
 		return err
@@ -160,6 +171,9 @@ func (r *Yorm) FindByQuery(where interface{}, models interface{}) error {
 }
 
 func (r *Yorm) FindByQueryForPage(where interface{}, columns interface{}, orderBy interface{}, page, rows int, models interface{}) error {
+	if err := r.CheckIsInit(); err != nil {
+		return err
+	}
 
 	db, err := BuildWhereForPage(r.db, where, columns, orderBy, page, rows)
 	if err != nil {
@@ -174,6 +188,10 @@ func (r *Yorm) FindByQueryForPage(where interface{}, columns interface{}, orderB
 }
 
 func (r *Yorm) Create(model interface{}) error {
+	if err := r.CheckIsInit(); err != nil {
+		return err
+	}
+
 	if model == nil {
 		return errors.New("model is missing")
 	}
@@ -186,6 +204,10 @@ func (r *Yorm) Create(model interface{}) error {
 }
 
 func (r *Yorm) Update(model interface{}) error {
+	if err := r.CheckIsInit(); err != nil {
+		return err
+	}
+
 	if model == nil {
 		return errors.New("model is missing")
 	}
@@ -198,6 +220,10 @@ func (r *Yorm) Update(model interface{}) error {
 }
 
 func (r *Yorm) UpdateBatch(updateFileds interface{}, where interface{}, model interface{}) error {
+	if err := r.CheckIsInit(); err != nil {
+		return err
+	}
+
 	if updateFileds == nil {
 		return errors.New("updateFileds is missing")
 	}
@@ -219,6 +245,9 @@ func (r *Yorm) UpdateBatch(updateFileds interface{}, where interface{}, model in
 }
 
 func (r *Yorm) Delete(model interface{}) error {
+	if err := r.CheckIsInit(); err != nil {
+		return err
+	}
 
 	if err := r.db.Delete(model).Error; err != nil {
 		return err
