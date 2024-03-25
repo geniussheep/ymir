@@ -206,6 +206,11 @@ func (api Api) OK(data interface{}, msg string) {
 	response.OK(api.Context, data, msg)
 }
 
+// OKWithCustomCode 通常成功数据处理且自定义response.code
+func (api Api) OKWithCustomCode(code int32, data interface{}, msg string) {
+	response.OKWithCustomCode(api.Context, code, data, msg)
+}
+
 // PageOK 分页数据处理
 func (api Api) PageOK(result interface{}, count int, pageIndex int, pageSize int, msg string) {
 	response.PageOK(api.Context, result, count, pageIndex, pageSize, msg)
@@ -213,5 +218,5 @@ func (api Api) PageOK(result interface{}, count int, pageIndex int, pageSize int
 
 // Custom 兼容函数
 func (api Api) Custom(data gin.H) {
-	response.Custum(api.Context, data)
+	response.Custom(api.Context, data)
 }
