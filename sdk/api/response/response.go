@@ -49,6 +49,21 @@ func OK(c *gin.Context, data interface{}, msg string) {
 	c.AbortWithStatusJSON(http.StatusOK, res)
 }
 
+// OKWithCustomCode 通常成功数据处理且自定义response.code
+func OKWithCustomCode(c *gin.Context, code int32, data interface{}, msg string) {
+	res := Default.Clone()
+	res.SetData(data)
+	res.SetSuccess(true)
+	if msg != "" {
+		res.SetMsg(msg)
+	}
+	res.SetTraceID(request.GenerateMsgIDFromContext(c))
+	res.SetCode(code)
+	c.Set("result", res)
+	c.Set("status", http.StatusOK)
+	c.AbortWithStatusJSON(http.StatusOK, res)
+}
+
 // PageOK 分页数据处理
 func PageOK(c *gin.Context, result interface{}, count int, pageIndex int, pageSize int, msg string) {
 	var res page
@@ -59,8 +74,8 @@ func PageOK(c *gin.Context, result interface{}, count int, pageIndex int, pageSi
 	OK(c, res, msg)
 }
 
-// Custum 兼容函数
-func Custum(c *gin.Context, data gin.H) {
+// Custom 兼容函数
+func Custom(c *gin.Context, data gin.H) {
 	data["requestId"] = request.GenerateMsgIDFromContext(c)
 	c.Set("result", data)
 	c.AbortWithStatusJSON(http.StatusOK, data)
