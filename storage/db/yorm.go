@@ -90,7 +90,7 @@ func New(opts ...Option) (*Yorm, error) {
 	return r, nil
 }
 
-func (r *Yorm) CheckIsInit() error {
+func (r *Yorm) checkIsInit() error {
 	if r == nil || r.db == nil {
 		return errors.New("yorm is not init，please check code")
 	}
@@ -98,7 +98,7 @@ func (r *Yorm) CheckIsInit() error {
 }
 
 func (r *Yorm) Init(models ...interface{}) error {
-	if err := r.CheckIsInit(); err != nil {
+	if err := r.checkIsInit(); err != nil {
 		return err
 	}
 
@@ -114,7 +114,7 @@ func (r *Yorm) Init(models ...interface{}) error {
 }
 
 func (r *Yorm) FindOne(id int64, model interface{}) error {
-	if err := r.CheckIsInit(); err != nil {
+	if err := r.checkIsInit(); err != nil {
 		return err
 	}
 
@@ -128,7 +128,7 @@ func (r *Yorm) FindOne(id int64, model interface{}) error {
 }
 
 func (r *Yorm) First(model interface{}) error {
-	if err := r.CheckIsInit(); err != nil {
+	if err := r.checkIsInit(); err != nil {
 		return err
 	}
 	r.db.First(model)
@@ -136,7 +136,7 @@ func (r *Yorm) First(model interface{}) error {
 }
 
 func (r *Yorm) Last(model interface{}) error {
-	if err := r.CheckIsInit(); err != nil {
+	if err := r.checkIsInit(); err != nil {
 		return err
 	}
 	r.db.Last(model)
@@ -144,7 +144,7 @@ func (r *Yorm) Last(model interface{}) error {
 }
 
 func (r *Yorm) FindAll(models interface{}) error {
-	if err := r.CheckIsInit(); err != nil {
+	if err := r.checkIsInit(); err != nil {
 		return err
 	}
 	if err := r.db.Find(models).Error; err != nil {
@@ -154,8 +154,79 @@ func (r *Yorm) FindAll(models interface{}) error {
 	return nil
 }
 
+// FindByQuery 根据条件查询数据
+// where: 构建where条件
+//
+//	1、and条件测试
+//
+//		where := []interface{}{
+//			[]interface{}{"id", "=", 1},
+//			[]interface{}{"username", "chen"},
+//		}
+//
+//	db, err = entity.BuildWhere(db, where)
+//	db.Find(&users)
+//	// SELECT * FROM `users`  WHERE (id = 1)and(username = 'chen')
+//
+//	2、结构体条件测试
+//	where := user.User{ID: 1, UserName: "chen"}
+//	db, err = entity.BuildWhere(db, where)
+//	db.Find(&users)
+//	// SELECT * FROM `users`  WHERE (id = 1) and (username = 'chen')
+//
+//	3、in,or条件测试
+//
+//		where := []interface{}{
+//			[]interface{}{"id", "in", []int{1, 2}},
+//			[]interface{}{"username", "=", "chen", "or"},
+//		}
+//
+//	db, err = entity.BuildWhere(db, where)
+//	db.Find(&users)
+//	// SELECT * FROM `users`  WHERE (id in ('1','2')) OR (username = 'chen')
+//
+//	3.1、not in,or条件测试
+//
+//		where := []interface{}{
+//			[]interface{}{"id", "not in", []int{1}},
+//			[]interface{}{"username", "=", "chen", "or"},
+//		}
+//
+//	db, err = entity.BuildWhere(db, where)
+//	db.Find(&users)
+//	// SELECT * FROM `users`  WHERE (id not in ('1')) OR (username = 'chen')
+//
+//	4、map条件测试
+//	where := map[string]interface{}{"id": 1, "username": "chen"}
+//	db, err = entity.BuildWhere(db, where)
+//	db.Find(&users)
+//	// SELECT * FROM `users`  WHERE (`users`.`id` = '1') AND (`users`.`username` = 'chen')
+//
+//	5、and,or混合条件测试
+//
+//		where := []interface{}{
+//			[]interface{}{"id", "in", []int{1, 2}},
+//			[]interface{}{"username = ? or nickname = ?", "chen", "yond"},
+//		}
+//
+//	db, err = entity.BuildWhere(db, where)
+//	db.Find(&users)
+//	SELECT * FROM `users`  WHERE (id in ('1','2')) AND (username = 'chen' or nickname = 'yond')
+//
+//	注：不要使用下方方法
+//	where := []interface{}{
+//			[]interface{}{"id", "in", []int{1, 2}},
+//			[]interface{}{
+//				[]interface{}{"username", "=", "chen"},
+//				[]interface{}{"username", "=", "yond", "or"},
+//			},
+//		}
+//
+//	返回sql: SELECT * FROM `users`  WHERE (id in ('1','2')) AND (username = 'chen') OR (username = 'yond')
+//	与设想不一样
+//	经过测试，gorm底层暂时不支持db.Where(func(db *gorm.DB) *gorm.DB {})闭包方法
 func (r *Yorm) FindByQuery(where interface{}, models interface{}) error {
-	if err := r.CheckIsInit(); err != nil {
+	if err := r.checkIsInit(); err != nil {
 		return err
 	}
 	db, err := BuildWhere(r.db, where)
@@ -170,12 +241,87 @@ func (r *Yorm) FindByQuery(where interface{}, models interface{}) error {
 	return nil
 }
 
-func (r *Yorm) FindByQueryForPage(where interface{}, columns interface{}, orderBy interface{}, page, rows int, models interface{}) error {
-	if err := r.CheckIsInit(); err != nil {
+// FindByQueryForPage  根据条件分页查询数据
+// where: 构建where条件
+//
+//	1、and条件测试
+//
+//		where := []interface{}{
+//			[]interface{}{"id", "=", 1},
+//			[]interface{}{"username", "chen"},
+//		}
+//
+//	db, err = entity.BuildWhere(db, where)
+//	db.Find(&users)
+//	// SELECT * FROM `users`  WHERE (id = 1)and(username = 'chen')
+//
+//	2、结构体条件测试
+//	where := user.User{ID: 1, UserName: "chen"}
+//	db, err = entity.BuildWhere(db, where)
+//	db.Find(&users)
+//	// SELECT * FROM `users`  WHERE (id = 1) and (username = 'chen')
+//
+//	3、in,or条件测试
+//
+//		where := []interface{}{
+//			[]interface{}{"id", "in", []int{1, 2}},
+//			[]interface{}{"username", "=", "chen", "or"},
+//		}
+//
+//	db, err = entity.BuildWhere(db, where)
+//	db.Find(&users)
+//	// SELECT * FROM `users`  WHERE (id in ('1','2')) OR (username = 'chen')
+//
+//	3.1、not in,or条件测试
+//
+//		where := []interface{}{
+//			[]interface{}{"id", "not in", []int{1}},
+//			[]interface{}{"username", "=", "chen", "or"},
+//		}
+//
+//	db, err = entity.BuildWhere(db, where)
+//	db.Find(&users)
+//	// SELECT * FROM `users`  WHERE (id not in ('1')) OR (username = 'chen')
+//
+//	4、map条件测试
+//	where := map[string]interface{}{"id": 1, "username": "chen"}
+//	db, err = entity.BuildWhere(db, where)
+//	db.Find(&users)
+//	// SELECT * FROM `users`  WHERE (`users`.`id` = '1') AND (`users`.`username` = 'chen')
+//
+//	5、and,or混合条件测试
+//
+//		where := []interface{}{
+//			[]interface{}{"id", "in", []int{1, 2}},
+//			[]interface{}{"username = ? or nickname = ?", "chen", "yond"},
+//		}
+//
+//	db, err = entity.BuildWhere(db, where)
+//	db.Find(&users)
+//	SELECT * FROM `users`  WHERE (id in ('1','2')) AND (username = 'chen' or nickname = 'yond')
+//
+//	注：不要使用下方方法
+//	where := []interface{}{
+//			[]interface{}{"id", "in", []int{1, 2}},
+//			[]interface{}{
+//				[]interface{}{"username", "=", "chen"},
+//				[]interface{}{"username", "=", "yond", "or"},
+//			},
+//		}
+//
+//	返回sql: SELECT * FROM `users`  WHERE (id in ('1','2')) AND (username = 'chen') OR (username = 'yond')
+//	与设想不一样
+//	经过测试，gorm底层暂时不支持db.Where(func(db *gorm.DB) *gorm.DB {})闭包方法
+//
+// orderBy: 排序字段 例： interface{}{“id desc”}
+// pageIndex: 当前第几页
+// pageSize:  每页数据条数
+func (r *Yorm) FindByQueryForPage(where interface{}, orderBy interface{}, pageIndex, pageSize int, models interface{}) error {
+	if err := r.checkIsInit(); err != nil {
 		return err
 	}
 
-	db, err := BuildWhereForPage(r.db, where, columns, orderBy, page, rows)
+	db, err := BuildWhereForPage(r.db, where, orderBy, pageIndex, pageSize)
 	if err != nil {
 		return err
 	}
@@ -188,7 +334,7 @@ func (r *Yorm) FindByQueryForPage(where interface{}, columns interface{}, orderB
 }
 
 func (r *Yorm) Create(model interface{}) error {
-	if err := r.CheckIsInit(); err != nil {
+	if err := r.checkIsInit(); err != nil {
 		return err
 	}
 
@@ -204,7 +350,7 @@ func (r *Yorm) Create(model interface{}) error {
 }
 
 func (r *Yorm) Update(model interface{}) error {
-	if err := r.CheckIsInit(); err != nil {
+	if err := r.checkIsInit(); err != nil {
 		return err
 	}
 
@@ -219,8 +365,15 @@ func (r *Yorm) Update(model interface{}) error {
 	return nil
 }
 
+// UpdateBatch 批量更新 支持多个字段更新
+// updateFileds:待更新的字段
+//
+//		例1、使用map方式传入 - map[string]interface{}{"name": "hello", "age": 18, "active": false}
+//	 	例2、使用struct方式传入 - User{Name: "hello", Age: 18, Active: false}
+//
+// where: 查询条件
 func (r *Yorm) UpdateBatch(updateFileds interface{}, where interface{}, model interface{}) error {
-	if err := r.CheckIsInit(); err != nil {
+	if err := r.checkIsInit(); err != nil {
 		return err
 	}
 
@@ -245,7 +398,7 @@ func (r *Yorm) UpdateBatch(updateFileds interface{}, where interface{}, model in
 }
 
 func (r *Yorm) Delete(model interface{}) error {
-	if err := r.CheckIsInit(); err != nil {
+	if err := r.checkIsInit(); err != nil {
 		return err
 	}
 

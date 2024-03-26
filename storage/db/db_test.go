@@ -107,7 +107,7 @@ func (KSCSlb) TableName() string {
 }
 
 func TestDb(t *testing.T) {
-	var models []ViewApplicationContact
+	var models []Application
 	var model KSCSlb
 	l := logger.NewLogger(logger.WithLevel(logger.DebugLevel))
 	logger.DefaultLogger = l
@@ -119,15 +119,20 @@ func TestDb(t *testing.T) {
 	if err != nil {
 		logger.Errorf("open sql connecting error:%e", err.Error())
 	}
-	appIds := []int{1, 2, 4, 5031}
-	appNames := []string{"api", "risk", "soa-test"}
+	//appIds := []int{1, 2, 4, 5031}
+	//appNames := []string{"api", "risk", "soa-test"}
+	//where := []interface{}{
+	//	[]interface{}{"application_id", "in", appIds},
+	//	[]interface{}{"application_name in ? or alias_name in ?", appNames, appNames},
+	//}
+
 	where := []interface{}{
-		[]interface{}{"application_id", "in", appIds},
-		[]interface{}{"application_name in ? or alias_name in ?", appNames, appNames},
+		[]interface{}{"status = ?", "ready"},
 	}
 
-	err = yorm.FindByQuery(where, &models)
+	err = yorm.FindByQueryForPage(where, "id desc", 20, 10, &models)
 
+	err = yorm.FindByQueryForPage(where, "id desc", 4, 20, &models)
 	return
 
 	if err != nil {
