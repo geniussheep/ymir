@@ -316,14 +316,22 @@ func (r *Yorm) FindByQuery(where interface{}, models interface{}) error {
 // orderBy: 排序字段 例： interface{}{“id desc”}
 // pageIndex: 当前第几页
 // pageSize:  每页数据条数
-func (r *Yorm) FindByQueryForPage(where interface{}, orderBy interface{}, pageIndex, pageSize int, models interface{}) error {
+// total:  数据总条数
+func (r *Yorm) FindByQueryForPage(where interface{}, orderBy interface{}, pageIndex, pageSize int, total *int64, models interface{}) error {
 	if err := r.checkIsInit(); err != nil {
 		return err
 	}
 
-	db, err := BuildWhereForPage(r.db, where, orderBy, pageIndex, pageSize)
+	db, err := BuildWhere(r.db, where)
 	if err != nil {
 		return err
+	}
+
+	if orderBy != nil && orderBy != "" {
+		db = db.Order(orderBy)
+	}
+	if pageIndex > 0 && pageSize > 0 {
+		db = db.Model(models).Count(total).Limit(pageSize).Offset((pageIndex - 1) * pageSize)
 	}
 
 	if err := db.Find(models).Error; err != nil {

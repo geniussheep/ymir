@@ -129,10 +129,10 @@ func TestDb(t *testing.T) {
 	where := []interface{}{
 		[]interface{}{"status = ?", "ready"},
 	}
+	var total int64
+	err = yorm.FindByQueryForPage(where, "id desc", 20, 10, &total, &models)
 
-	err = yorm.FindByQueryForPage(where, "id desc", 20, 10, &models)
-
-	err = yorm.FindByQueryForPage(where, "id desc", 4, 20, &models)
+	err = yorm.FindByQueryForPage(where, "id desc", 4, 20, &total, &models)
 	return
 
 	if err != nil {
