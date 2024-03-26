@@ -162,19 +162,3 @@ func BuildWhere(db *gorm.DB, where interface{}) (*gorm.DB, error) {
 	}
 	return db, nil
 }
-
-// BuildWhereForPage 构建分页查询条件
-// where: 查询条件
-// orderBy: 排序字段
-// pageIndex: 当前第几页
-// pageSize:  每页数据条数
-// total: 数据总量
-//func BuildWhereForPage(db *gorm.DB, where interface{}, orderBy interface{}, pageIndex, pageSize int, total *int64) (*gorm.DB, error) {
-//	var err error
-//	db, err = BuildWhere(db, where)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	return db, err
-//}
