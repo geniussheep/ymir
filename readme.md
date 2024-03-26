@@ -21,3 +21,6 @@
 ### v1.0.3
 - 调整数据库方法及注释
     - FindByQueryForPage方法新增total参数
+### v1.0.4
+- Api返回值Response
+  - 去除每个Response字段json设置的,omitempty，保证不管什么值都会返回不会被丢弃(当字段是0或nil时)
