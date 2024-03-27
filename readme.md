@@ -24,3 +24,8 @@
 ### v1.0.4
 - Api返回值Response
   - 去除每个Response字段json设置的,omitempty，保证不管什么值都会返回不会被丢弃(当字段是0或nil时)
+### v1.0.5
+- Http方法优化
+  - 加入默认的请求头 "Content-Type": "application/json"
+- validator方法优化
+  - 调整 CheckArrayArgs 入参为 value []interface{}

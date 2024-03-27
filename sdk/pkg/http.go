@@ -10,6 +10,8 @@ import (
 	"net/url"
 )
 
+var defaultHeader = map[string]string{"Content-Type": "application/json"}
+
 func HttpRequest(method string, callUrl string, headers map[string]string, query map[string]string, body []byte) ([]byte, error) {
 	apiURL, _ := url.Parse(callUrl)
 	params := url.Values{}
@@ -25,6 +27,10 @@ func HttpRequest(method string, callUrl string, headers map[string]string, query
 	}
 
 	req, err := http.NewRequest(method, u, b)
+
+	for k, v := range defaultHeader {
+		req.Header.Set(k, v)
+	}
 
 	if headers != nil {
 		for k, v := range headers {

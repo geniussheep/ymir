@@ -32,7 +32,7 @@ type PostAPIResult[T any] struct {
 
 func TestGet(t *testing.T) {
 	var res PostAPIResult[ApplicationCicdResponse]
-	err := GetJson("http://tapd-api.benlai.com/api/v1/story/gets?workspace_id=63699230&id=1163699230001042105", nil, nil, &res)
+	err := GetJson("http://tapd-api.benlai.com/api/v1/story/gets?workspace_id=63699230&id=1163699230001042105", map[string]string{"Content-Type": "text/plain"}, nil, &res)
 	if err != nil {
 		fmt.Printf("%v", err)
 		return

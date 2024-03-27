@@ -16,7 +16,7 @@ func CheckStringArgs(name string, value string) error {
 	return nil
 }
 
-func CheckArrayArgs(name string, value []string) error {
+func CheckArrayArgs(name string, value []interface{}) error {
 	if value == nil || len(value) <= 0 {
 		return fmt.Errorf("the args:%s is empty", name)
 	}
