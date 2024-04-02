@@ -123,33 +123,32 @@ func (l *traceRecorder) Trace(ctx context.Context, begin time.Time, fc func() (s
 	l.Err = err
 }
 
-//
-//func New(config logger.Config) logger.Interface {
-//	var (
-//		infoStr      = "%s\n[info] "
-//		warnStr      = "%s\n[warn] "
-//		errStr       = "%s\n[error] "
-//		traceStr     = "%s [%.3fms] [rows:%v] %s"
-//		traceWarnStr = "%s %s [%.3fms] [rows:%v] %s"
-//		traceErrStr  = "%s %s [%.3fms] [rows:%v] %s"
-//	)
-//
-//	if config.Colorful {
-//		infoStr = Green + "%s " + Reset + Green + "[info] " + Reset
-//		warnStr = BlueBold + "%s " + Reset + Magenta + "[warn] " + Reset
-//		errStr = Magenta + "%s " + Reset + Red + "[error] " + Reset
-//		traceStr = Green + "%s " + Reset + Yellow + "[%.3fms] " + BlueBold + "[rows:%v]" + Reset + " %s"
-//		traceWarnStr = Green + "%s " + Yellow + "%s " + Reset + RedBold + "[%.3fms] " + Yellow + "[rows:%v]" + Magenta + " %s" + Reset
-//		traceErrStr = RedBold + "%s " + MagentaBold + "%s " + Reset + Yellow + "[%.3fms] " + BlueBold + "[rows:%v]" + Reset + " %s"
-//	}
-//
-//	return &gormLogger{
-//		Config:       config,
-//		infoStr:      infoStr,
-//		warnStr:      warnStr,
-//		errStr:       errStr,
-//		traceStr:     traceStr,
-//		traceWarnStr: traceWarnStr,
-//		traceErrStr:  traceErrStr,
-//	}
-//}
+func NewYormLogger(config logger.Config) logger.Interface {
+	var (
+		infoStr      = "%s\n[info] "
+		warnStr      = "%s\n[warn] "
+		errStr       = "%s\n[error] "
+		traceStr     = "%s [%.3fms] [rows:%v] %s"
+		traceWarnStr = "%s %s [%.3fms] [rows:%v] %s"
+		traceErrStr  = "%s %s [%.3fms] [rows:%v] %s"
+	)
+
+	if config.Colorful {
+		infoStr = logger.Green + "%s " + logger.Reset + logger.Green + "[info] " + logger.Reset
+		warnStr = logger.BlueBold + "%s " + logger.Reset + logger.Magenta + "[warn] " + logger.Reset
+		errStr = logger.Magenta + "%s " + logger.Reset + logger.Red + "[error] " + logger.Reset
+		traceStr = logger.Green + "%s " + logger.Reset + logger.Yellow + "[%.3fms] " + logger.BlueBold + "[rows:%v]" + logger.Reset + " %s"
+		traceWarnStr = logger.Green + "%s " + logger.Yellow + "%s " + logger.Reset + logger.RedBold + "[%.3fms] " + logger.Yellow + "[rows:%v]" + logger.Magenta + " %s" + logger.Reset
+		traceErrStr = logger.RedBold + "%s " + logger.MagentaBold + "%s " + logger.Reset + logger.Yellow + "[%.3fms] " + logger.BlueBold + "[rows:%v]" + logger.Reset + " %s"
+	}
+
+	return &gormLogger{
+		Config:       config,
+		infoStr:      infoStr,
+		warnStr:      warnStr,
+		errStr:       errStr,
+		traceStr:     traceStr,
+		traceWarnStr: traceWarnStr,
+		traceErrStr:  traceErrStr,
+	}
+}

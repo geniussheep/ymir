@@ -29,3 +29,6 @@
   - 加入默认的请求头 "Content-Type": "application/json"
 - validator方法优化
   - 调整 CheckArrayArgs 入参为 value []interface{}
+### v1.0.6
+- Yorm数据库调整
+  - 调整日志格式
