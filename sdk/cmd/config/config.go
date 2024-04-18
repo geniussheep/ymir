@@ -18,13 +18,13 @@ func New(p *cli.Program) cli.FlagSet {
 		cmd: &cobra.Command{
 			Use:     "config",
 			Short:   "get app config info",
-			Example: fmt.Sprintf("%s config -c %s", p.Program, common.DEFAULT_CONFIG_FILE_PATH),
+			Example: fmt.Sprintf("%s config -c %s", p.Program, common.DefaultConfigFilePath),
 			Run: func(cmd *cobra.Command, args []string) {
 				run(p)
 			},
 		},
 	}
-	f.cmd.PersistentFlags().StringVarP(&p.ConfigFilePath, "config", "c", common.DEFAULT_CONFIG_FILE_PATH, "start server with provided configuration file")
+	f.cmd.PersistentFlags().StringVarP(&p.ConfigFilePath, "config", "c", common.DefaultConfigFilePath, "start server with provided configuration file")
 	return &f
 }
 

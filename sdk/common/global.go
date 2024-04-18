@@ -1,5 +1,5 @@
 package common
 
 const (
-	DEFAULT_CONFIG_FILE_PATH = "./conf/config.yaml"
+	DefaultConfigFilePath = "./conf/config.yaml"
 )

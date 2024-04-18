@@ -17,7 +17,7 @@ func TestDefault(t *testing.T) {
 	ExtendConfig = &ExtendConfigTest
 	Default()
 
-	println(fmt.Sprintf("appId: %d, appName:%s", ApplicationConfig.AppId, ApplicationConfig.AppName))
+	println(fmt.Sprintf("appId: %s, appName:%s", ApplicationConfig.AppId, ApplicationConfig.AppName))
 	println(fmt.Sprintf("jenkins: %s, jenkinsAgent:%s", ExtendConfigTest.Jenkins, ExtendConfigTest.JenkinsAgent))
 
 	for k, v := range DatabaseConfig {
@@ -27,4 +27,6 @@ func TestDefault(t *testing.T) {
 	for k, v := range RedisConfig {
 		println(fmt.Sprintf("%s: %v", k, v))
 	}
+
+	println(fmt.Sprintf("http: %v", HttpConfig))
 }

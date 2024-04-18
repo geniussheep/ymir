@@ -1,6 +1,5 @@
 application:
   appId: 10
-  appKey: '223-----------------323'
   appName: 'appName'
   httpPort: 9090111
 databases:
@@ -19,5 +18,12 @@ redis:
   cache:
     addr: 192.168.60.12:6379
     db: 0
+http:
+  cors:
+    allowCredentials: 'true'
+    allowOrigin: '*.benlai.com'
+  responseHeaders:
+    test: 123
+    env: 'prod'
 extend:
   jenkins: 123

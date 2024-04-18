@@ -32,7 +32,7 @@ func New(p *cli.Program) cli.FlagSet {
 		cmd: &cobra.Command{
 			Use:          "server",
 			Short:        "start app soa and esb web api server",
-			Example:      fmt.Sprintf("%s server -c %s", p.Program, common.DEFAULT_CONFIG_FILE_PATH),
+			Example:      fmt.Sprintf("%s server -c %s", p.Program, common.DefaultConfigFilePath),
 			SilenceUsage: true,
 			PreRun: func(cmd *cobra.Command, args []string) {
 				setup(p)
@@ -42,7 +42,7 @@ func New(p *cli.Program) cli.FlagSet {
 			},
 		},
 	}
-	f.cmd.PersistentFlags().StringVarP(&p.ConfigFilePath, "config", "c", common.DEFAULT_CONFIG_FILE_PATH, "start server with provided configuration file")
+	f.cmd.PersistentFlags().StringVarP(&p.ConfigFilePath, "config", "c", common.DefaultConfigFilePath, "start server with provided configuration file")
 	return &f
 }
 

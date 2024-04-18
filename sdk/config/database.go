@@ -3,7 +3,6 @@ package config
 type Database struct {
 	Dsn       string         `yaml:"dsn"  mapstructure:"dsn"`
 	Driver    string         `yaml:"driver"  mapstructure:"driver"`
-	UseDbms   bool           `yaml:"useDbms" mapstructure:"useDbms"`
 	LogConfig DatabaseLogger `yaml:"logConfig" mapstructure:"logConfig"`
 }
 

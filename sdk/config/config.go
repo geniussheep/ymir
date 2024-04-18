@@ -24,6 +24,7 @@ type Setting struct {
 	Databases   *map[string]*Database  `yaml:"databases"`
 	Redis       *map[string]*Redis     `yaml:"redis"`
 	Zookeeper   *map[string]*Zookeeper `yaml:"zookeeper"`
+	Http        *Http                  `yaml:"http"`
 	Extend      any                    `yaml:"extend"`
 	callbacks   []func()
 }
@@ -48,7 +49,7 @@ func (cfg *Setting) init() {
 }
 
 func Default() {
-	defaultConfigPath := common.DEFAULT_CONFIG_FILE_PATH
+	defaultConfigPath := common.DefaultConfigFilePath
 	logger.DefaultLogger.Logf(logger.InfoLevel, "load default config:%s", defaultConfigPath)
 	Setup(defaultConfigPath)
 }
@@ -119,6 +120,7 @@ func Setup(configPath string, cbs ...func()) {
 		Databases:   &DatabaseConfig,
 		Redis:       &RedisConfig,
 		Zookeeper:   &ZookeeperConfig,
+		Http:        HttpConfig,
 		Extend:      ExtendConfig,
 		callbacks:   cbs,
 	}
@@ -127,6 +129,7 @@ func Setup(configPath string, cbs ...func()) {
 		logger.DefaultLogger.Logf(logger.ErrorLevel, "load config failed, error: %s", err)
 		os.Exit(1)
 	}
+	setting.Http.SetDefault()
 	isInit = true
 	setting.init()
 	logger.DefaultLogger.Logf(logger.InfoLevel, "load config success")

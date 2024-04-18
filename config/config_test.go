@@ -8,7 +8,7 @@ import (
 
 func TestNew(t *testing.T) {
 
-	c, err := New(common.DEFAULT_CONFIG_FILE_PATH)
+	c, err := New(common.DefaultConfigFilePath)
 	if err != nil {
 		fmt.Printf("error: %s", err)
 	}

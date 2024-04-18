@@ -25,7 +25,7 @@ func New(p *cli.Program) cli.FlagSet {
 			},
 		},
 	}
-	f.cmd.PersistentFlags().StringVarP(&p.ConfigFilePath, "config", "c", common.DEFAULT_CONFIG_FILE_PATH, "start server with provided configuration file")
+	f.cmd.PersistentFlags().StringVarP(&p.ConfigFilePath, "config", "c", common.DefaultConfigFilePath, "start server with provided configuration file")
 	return &f
 }
 
