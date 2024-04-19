@@ -35,3 +35,8 @@
 ### v1.0.6.1
 - 升级viper版本修复bug
 - 去除test代码
+### v1.0.7
+- 新增http相关配置
+- 新增中间件 ResponseHeader.go
+- 调整跨域头的逻辑支持配置
+- 调整pkg.CheckArrayArgs方法支持泛型
