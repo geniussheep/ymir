@@ -3,7 +3,6 @@ package pkg
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -74,7 +73,7 @@ func httpRequestJson(httpMethod string, callUrl string, headers map[string]strin
 		return err
 	}
 	if err = json.Unmarshal(ret, response); err != nil {
-		return fmt.Errorf("%s", ret)
+		return err
 	}
 	return nil
 }
