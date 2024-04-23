@@ -40,3 +40,5 @@
 - 新增中间件 ResponseHeader.go
 - 调整跨域头的逻辑支持配置
 - 调整pkg.CheckArrayArgs方法支持泛型
+### v1.0.7.1
+- 修复pkg.http下httpRequestJson 反序列化json报错后返回的错误信息不正确问题
