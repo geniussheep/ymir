@@ -23,6 +23,7 @@ type Api struct {
 	Orm       map[string]*db.Yorm
 	Redis     map[string]*redis.Redis
 	Zookeeper map[string]*zookeeper.Zookeeper
+	Other     map[string]interface{}
 	Routers   map[string][]RouterEntry
 	Errors    error
 }
@@ -134,11 +135,27 @@ func (api *Api) MakeZookeeper(zkName string) *Api {
 	return api
 }
 
+func (api *Api) MakeOtherComponet(name string) *Api {
+	if api.Other == nil {
+		api.Other = make(map[string]interface{})
+	}
+	if _, ok := api.Other[name]; ok {
+		return api
+	}
+	ot, err := GetOtherComponent(api.Context, name)
+	if err != nil {
+		api.AddError(fmt.Errorf("set otherComponent:[name: %s] error: %s", name, err))
+	}
+	api.Other[name] = ot
+	return api
+}
+
 func (api *Api) MakeService(svc *service.Service) *Api {
 	svc.Log = api.Logger
 	svc.Orm = api.Orm
 	svc.Redis = api.Redis
 	svc.Zookeeper = api.Zookeeper
+	svc.Other = api.Other
 	return api
 }
 

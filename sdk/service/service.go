@@ -3,16 +3,16 @@ package service
 import (
 	"fmt"
 	"github.com/geniussheep/ymir/component/zookeeper"
-	"github.com/geniussheep/ymir/storage/redis"
-
 	"github.com/geniussheep/ymir/logger"
 	"github.com/geniussheep/ymir/storage/db"
+	"github.com/geniussheep/ymir/storage/redis"
 )
 
 type Service struct {
 	Orm       map[string]*db.Yorm
 	Redis     map[string]*redis.Redis
 	Zookeeper map[string]*zookeeper.Zookeeper
+	Other     map[string]interface{}
 	Log       *logger.Helper
 	Error     error
 }

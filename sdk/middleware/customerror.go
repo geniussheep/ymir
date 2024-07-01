@@ -20,28 +20,28 @@ func CustomError(c *gin.Context) {
 			}
 			switch errStr := err.(type) {
 			case string:
+				statusCode := http.StatusBadRequest
 				p := strings.Split(errStr, "#")
 				if len(p) == 3 && p[0] == "CustomError" {
-					statusCode, e := strconv.Atoi(p[1])
-					if e != nil {
-						break
+					if _statusCode, _err := strconv.Atoi(p[1]); _err != nil {
+						statusCode = _statusCode
 					}
-					c.Status(statusCode)
-					fmt.Println(
-						time.Now().Format("2006-01-02 15:04:05"),
-						"[ERROR]",
-						c.Request.Method,
-						c.Request.URL,
-						statusCode,
-						c.Request.RequestURI,
-						pkg.GetClientIP(c),
-						p[2],
-					)
-					c.JSON(http.StatusOK, gin.H{
-						"code": statusCode,
-						"msg":  p[2],
-					})
 				}
+				fmt.Println(
+					time.Now().Format("2006-01-02 15:04:05"),
+					"[ERROR]",
+					c.Request.Method,
+					c.Request.URL,
+					500,
+					c.Request.RequestURI,
+					pkg.GetClientIP(c),
+					err,
+				)
+				c.Status(statusCode)
+				c.JSON(http.StatusBadRequest, gin.H{
+					"code": statusCode,
+					"msg":  errStr,
+				})
 			default:
 				panic(err)
 			}
