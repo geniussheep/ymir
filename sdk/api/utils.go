@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/geniussheep/ymir/component/zookeeper"
+	"github.com/geniussheep/ymir/k8s"
 	"github.com/geniussheep/ymir/storage/db"
 	"github.com/geniussheep/ymir/storage/redis"
 	"github.com/gin-gonic/gin"
@@ -65,5 +66,19 @@ func GetOtherComponent(ctx *gin.Context, name string) (interface{}, error) {
 		return _other.(interface{}), nil
 	default:
 		return nil, fmt.Errorf("the %T:%s connect not exist", _other, name)
+	}
+}
+
+func GetK8S(ctx *gin.Context, k8sName string) (*k8s.Client, error) {
+	_k8s, exist := ctx.Get(k8sName)
+	if !exist {
+		return nil, fmt.Errorf("the k8s:%s connect not exist", k8sName)
+	}
+	switch _k8s.(type) {
+	case *k8s.Client:
+		//新增操作
+		return _k8s.(*k8s.Client), nil
+	default:
+		return nil, fmt.Errorf("the k8s:%s connect not exist", k8sName)
 	}
 }

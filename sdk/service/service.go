@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"github.com/geniussheep/ymir/component/zookeeper"
+	"github.com/geniussheep/ymir/k8s"
 	"github.com/geniussheep/ymir/logger"
 	"github.com/geniussheep/ymir/storage/db"
 	"github.com/geniussheep/ymir/storage/redis"
@@ -13,6 +14,7 @@ type Service struct {
 	Redis     map[string]*redis.Redis
 	Zookeeper map[string]*zookeeper.Zookeeper
 	Other     map[string]interface{}
+	K8S       map[string]*k8s.Client
 	Log       *logger.Helper
 	Error     error
 }

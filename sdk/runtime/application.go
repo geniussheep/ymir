@@ -3,6 +3,7 @@ package runtime
 import (
 	"github.com/casbin/casbin/v2"
 	"github.com/geniussheep/ymir/component/zookeeper"
+	"github.com/geniussheep/ymir/k8s"
 	"github.com/geniussheep/ymir/logger"
 	"github.com/geniussheep/ymir/sdk/api"
 	"github.com/geniussheep/ymir/storage/cache"
@@ -16,31 +17,32 @@ import (
 )
 
 type Application struct {
-	webApi      *api.Api
-	dbs         map[string]*db.Yorm
-	cache       cache.AdapterCache
-	redis       map[string]*redis.Redis
-	zookeeper   map[string]*zookeeper.Zookeeper
-	casbins     map[string]*casbin.SyncedEnforcer
-	middlewares map[string]interface{}
-	handler     map[string][]func(r *gin.RouterGroup, hand ...*gin.HandlerFunc)
-	engine      http.Handler
-	mux         sync.RWMutex
-	other       map[string]interface{}
+	webApi     *api.Api
+	db         map[string]*db.Yorm
+	cache      cache.AdapterCache
+	redis      map[string]*redis.Redis
+	zookeeper  map[string]*zookeeper.Zookeeper
+	casbin     map[string]*casbin.SyncedEnforcer
+	middleware map[string]interface{}
+	handler    map[string][]func(r *gin.RouterGroup, hand ...*gin.HandlerFunc)
+	engine     http.Handler
+	mux        sync.RWMutex
+	other      map[string]interface{}
+	k8s        map[string]*k8s.Client
 }
 
 // New 默认值
 func New() *Application {
 	return &Application{
-		webApi:      &api.Api{},
-		dbs:         make(map[string]*db.Yorm),
-		cache:       cache.NewMemoryCache(),
-		redis:       make(map[string]*redis.Redis),
-		zookeeper:   make(map[string]*zookeeper.Zookeeper),
-		casbins:     make(map[string]*casbin.SyncedEnforcer),
-		middlewares: make(map[string]interface{}),
-		handler:     make(map[string][]func(r *gin.RouterGroup, hand ...*gin.HandlerFunc)),
-		other:       make(map[string]interface{}),
+		webApi:     &api.Api{},
+		db:         make(map[string]*db.Yorm),
+		cache:      cache.NewMemoryCache(),
+		redis:      make(map[string]*redis.Redis),
+		zookeeper:  make(map[string]*zookeeper.Zookeeper),
+		casbin:     make(map[string]*casbin.SyncedEnforcer),
+		middleware: make(map[string]interface{}),
+		handler:    make(map[string][]func(r *gin.RouterGroup, hand ...*gin.HandlerFunc)),
+		other:      make(map[string]interface{}),
 	}
 }
 
@@ -95,37 +97,37 @@ func (a *Application) GetLogger() logger.Logger {
 func (a *Application) SetDb(dbName string, db *db.Yorm) {
 	a.mux.Lock()
 	defer a.mux.Unlock()
-	a.dbs[dbName] = db
+	a.db[dbName] = db
 }
 
 // GetDb 获取所有map里的db数据
 func (a *Application) GetDb(dbName string) *db.Yorm {
 	a.mux.Lock()
 	defer a.mux.Unlock()
-	if _, ok := a.dbs[dbName]; !ok {
+	if _, ok := a.db[dbName]; !ok {
 		return nil
 	}
-	return a.dbs[dbName]
+	return a.db[dbName]
 }
 
 func (a *Application) SetCasbin(key string, enforcer *casbin.SyncedEnforcer) {
 	a.mux.Lock()
 	defer a.mux.Unlock()
-	a.casbins[key] = enforcer
+	a.casbin[key] = enforcer
 }
 
 func (a *Application) GetAllCasbin() map[string]*casbin.SyncedEnforcer {
-	return a.casbins
+	return a.casbin
 }
 
 // GetCasbin 根据key获取casbin
 func (a *Application) GetCasbin(key string) *casbin.SyncedEnforcer {
 	a.mux.Lock()
 	defer a.mux.Unlock()
-	if e, ok := a.casbins["*"]; ok {
+	if e, ok := a.casbin["*"]; ok {
 		return e
 	}
-	return a.casbins[key]
+	return a.casbin[key]
 }
 
 func (a *Application) SetRedis(rName string, redis *redis.Redis) {
@@ -163,19 +165,19 @@ func (a *Application) GetZookeeper(zkName string) *zookeeper.Zookeeper {
 func (a *Application) SetMiddleware(key string, middleware interface{}) {
 	a.mux.Lock()
 	defer a.mux.Unlock()
-	a.middlewares[key] = middleware
+	a.middleware[key] = middleware
 }
 
 // GetAllMiddleware 获取所有中间件
 func (a *Application) GetAllMiddleware() map[string]interface{} {
-	return a.middlewares
+	return a.middleware
 }
 
 // GetMiddleware 获取对应key的中间件
 func (a *Application) GetMiddleware(key string) interface{} {
 	a.mux.Lock()
 	defer a.mux.Unlock()
-	return a.middlewares[key]
+	return a.middleware[key]
 }
 
 // SetOtherComponent 设置其他组件实例
@@ -195,4 +197,19 @@ func (a *Application) GetOtherComponent(key string) interface{} {
 	a.mux.Lock()
 	defer a.mux.Unlock()
 	return a.other[key]
+}
+
+func (a *Application) SetK8S(k8sName string, k8s *k8s.Client) {
+	a.mux.Lock()
+	defer a.mux.Unlock()
+	a.k8s[k8sName] = k8s
+}
+
+func (a *Application) GetK8S(k8sName string) *k8s.Client {
+	a.mux.Lock()
+	defer a.mux.Unlock()
+	if _, ok := a.k8s[k8sName]; !ok {
+		return nil
+	}
+	return a.k8s[k8sName]
 }

@@ -3,6 +3,7 @@ package runtime
 import (
 	"github.com/casbin/casbin/v2"
 	"github.com/geniussheep/ymir/component/zookeeper"
+	"github.com/geniussheep/ymir/k8s"
 	"github.com/geniussheep/ymir/logger"
 	"github.com/geniussheep/ymir/sdk/api"
 	"github.com/geniussheep/ymir/storage/db"
@@ -46,4 +47,7 @@ type Runtime interface {
 	SetOtherComponent(string, interface{})
 	GetAllOtherComponent() map[string]interface{}
 	GetOtherComponent(key string) interface{}
+
+	SetK8S(k8sName string, client *k8s.Client)
+	GetK8S(k8sName string) *k8s.Client
 }

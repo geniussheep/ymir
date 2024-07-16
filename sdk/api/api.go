@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/geniussheep/ymir/component/zookeeper"
+	"github.com/geniussheep/ymir/k8s"
 	"github.com/geniussheep/ymir/sdk/api/response"
 	"github.com/geniussheep/ymir/sdk/config"
 	"github.com/geniussheep/ymir/sdk/pkg"
@@ -24,6 +25,7 @@ type Api struct {
 	Redis     map[string]*redis.Redis
 	Zookeeper map[string]*zookeeper.Zookeeper
 	Other     map[string]interface{}
+	K8S       map[string]*k8s.Client
 	Routers   map[string][]RouterEntry
 	Errors    error
 }
@@ -150,12 +152,28 @@ func (api *Api) MakeOtherComponet(name string) *Api {
 	return api
 }
 
+func (api *Api) MakeK8S(k8sName string) *Api {
+	if api.K8S == nil {
+		api.K8S = make(map[string]*k8s.Client)
+	}
+	if _, ok := api.K8S[k8sName]; ok {
+		return api
+	}
+	k8s, err := GetK8S(api.Context, k8sName)
+	if err != nil {
+		api.AddError(fmt.Errorf("set k8s:[name: %s] error: %s", k8sName, err))
+	}
+	api.K8S[k8sName] = k8s
+	return api
+}
+
 func (api *Api) MakeService(svc *service.Service) *Api {
 	svc.Log = api.Logger
 	svc.Orm = api.Orm
 	svc.Redis = api.Redis
 	svc.Zookeeper = api.Zookeeper
 	svc.Other = api.Other
+	svc.K8S = api.K8S
 	return api
 }
 
