@@ -24,6 +24,7 @@ type Setting struct {
 	Databases   *map[string]*Database  `yaml:"databases"`
 	Redis       *map[string]*Redis     `yaml:"redis"`
 	Zookeeper   *map[string]*Zookeeper `yaml:"zookeeper"`
+	K8S         *map[string]*K8S       `yaml:"k8s"`
 	Http        *Http                  `yaml:"http"`
 	Extend      any                    `yaml:"extend"`
 	callbacks   []func()
@@ -120,6 +121,7 @@ func Setup(configPath string, cbs ...func()) {
 		Databases:   &DatabaseConfig,
 		Redis:       &RedisConfig,
 		Zookeeper:   &ZookeeperConfig,
+		K8S:         &K8SConfig,
 		Http:        HttpConfig,
 		Extend:      ExtendConfig,
 		callbacks:   cbs,

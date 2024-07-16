@@ -33,17 +33,19 @@ const (
 )
 
 type K8S interface {
-	RestartDeployment(namespace string, deployName string) error
 	GetNode(nodeName string) (*v1.Node, error)
 	GetNodeByIP(nodeIP string) (*v1.Node, error)
-	GetPod(podName string, namespace string) (*v1.Pod, error)
+	GetPod(namespace string, podName string) (*v1.Pod, error)
+	GetDeployment(namespace string, deployName string) (*appsv1.Deployment, error)
+	GetDeploymentByPod(pod *v1.Pod) (*appsv1.Deployment, error)
+	GetHPA(namespace string, hpaName string) (*autoscalingv1.HorizontalPodAutoscaler, error)
+	GetStatefulSet(namespace string, stsName string) (*appsv1.StatefulSet, error)
+	GetDaemonSet(namespace string, dsName string) (*appsv1.DaemonSet, error)
+	GetCronJob(namespace string, cronJobName string) (*batchv1beta1.CronJob, error)
+	GetJob(namespace string, jobName string) (*batchv1.Job, error)
+	GetPvc(namespace string, pvcName string) (*v1.PersistentVolumeClaim, error)
 	PodExecCmd(pod *v1.Pod, command string) (string, error)
-	GetDeployment(deployName string, namespace string) (*appsv1.Deployment, error)
-	GetStatefulSet(stsName string, namespace string) (*appsv1.StatefulSet, error)
-	GetDaemonSet(dsName string, namespace string) (*appsv1.DaemonSet, error)
-	GetCronJob(cronJobName string, namespace string) (*batchv1beta1.CronJob, error)
-	GetJob(jobName string, namespace string) (*batchv1.Job, error)
-	GetPvc(pvcName string, namespace string) (*v1.PersistentVolumeClaim, error)
+	RestartDeployment(namespace string, deployName string) error
 	WithContext(ctx context.Context) *Client
 }
 
@@ -97,12 +99,12 @@ func New(opts ...Option) (*Client, error) {
 	}
 	config, err := getRestConfig(conf)
 	if err != nil {
-		return nil, fmt.Errorf("building k8s client config error: %s", err)
+		return nil, fmt.Errorf("get k8s client config error: %s", err)
 	}
 
 	client, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		return nil, fmt.Errorf("creating Kubernetes client error: %s", err)
+		return nil, fmt.Errorf("creating k8s client error: %s", err)
 	}
 
 	ksURL, err := NewKubeSphereURL(conf.WebBaseURL)
@@ -131,33 +133,6 @@ func (s *PodStatus) IsRunning() bool {
 	return s.Phase == string(v1.PodRunning)
 }
 
-func (c *Client) RestartDeployment(namespace string, deployName string) error {
-	deploy := c.k8s.AppsV1().Deployments(namespace)
-
-	json := fmt.Sprintf(`
-	{
-		"spec":
-		{
-			"template":
-			{
-				"metadata":
-				{
-					"annotations":
-					{
-						"mon.benlai.cloud/restartedAt": "%s"
-					}
-				}
-			}
-		}
-	}`, time.Now().String())
-
-	if _, err := deploy.Patch(c.context, deployName, types.StrategicMergePatchType, []byte(json), metav1.PatchOptions{}); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (c *Client) GetNode(nodeName string) (*v1.Node, error) {
 	return c.k8s.CoreV1().Nodes().Get(c.context, nodeName, metav1.GetOptions{})
 }
@@ -180,8 +155,67 @@ func (c *Client) GetNodeByIP(nodeIP string) (*v1.Node, error) {
 	return nil, fmt.Errorf("node(ip=%s) not found", nodeIP)
 }
 
-func (c *Client) GetPod(podName string, namespace string) (*v1.Pod, error) {
+func (c *Client) GetJob(namespace string, jobName string) (*batchv1.Job, error) {
+	return c.k8s.BatchV1().Jobs(namespace).Get(c.context, jobName, metav1.GetOptions{})
+}
+
+func (c *Client) GetCronJob(namespace string, cronJobName string) (*batchv1beta1.CronJob, error) {
+	return c.k8s.BatchV1beta1().CronJobs(namespace).Get(c.context, cronJobName, metav1.GetOptions{})
+}
+
+func (c *Client) GetCronJobByJob(job *batchv1.Job) (*batchv1beta1.CronJob, error) {
+	for _, v := range job.OwnerReferences {
+		if v.Kind == "CronJob" {
+			cronJob, err := c.GetCronJob(v.Name, job.Namespace)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return cronJob, nil
+		}
+	}
+
+	return nil, fmt.Errorf("cronjob not found by job: %s/%s", job.Namespace, job.Name)
+}
+
+func (c *Client) GetDaemonSet(namespace string, dsName string) (*appsv1.DaemonSet, error) {
+	return c.k8s.AppsV1().DaemonSets(namespace).Get(c.context, dsName, metav1.GetOptions{})
+}
+
+func (c *Client) GetStatefulSet(namespace string, stsName string) (*appsv1.StatefulSet, error) {
+	return c.k8s.AppsV1().StatefulSets(namespace).Get(c.context, stsName, metav1.GetOptions{})
+}
+
+func (c *Client) GetPod(namespace string, podName string) (*v1.Pod, error) {
 	return c.k8s.CoreV1().Pods(namespace).Get(c.context, podName, metav1.GetOptions{})
+}
+
+func (c *Client) GetDeployment(namespace string, deployName string) (*appsv1.Deployment, error) {
+	return c.k8s.AppsV1().Deployments(namespace).Get(c.context, deployName, metav1.GetOptions{})
+}
+
+func (c *Client) GetDeploymentByPod(pod *v1.Pod) (*appsv1.Deployment, error) {
+	for _, v := range pod.OwnerReferences {
+		if v.Kind == "Deployment" {
+			deploy, err := c.GetDeployment(v.Name, pod.Namespace)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return deploy, nil
+		}
+	}
+	return nil, fmt.Errorf("deployment not found by pod: %s/%s", pod.Namespace, pod.Name)
+}
+
+func (c *Client) GetHPA(namespace string, hpaName string) (*autoscalingv1.HorizontalPodAutoscaler, error) {
+	return c.k8s.AutoscalingV1().HorizontalPodAutoscalers(namespace).Get(c.context, hpaName, metav1.GetOptions{})
+}
+
+func (c *Client) GetPvc(namespace string, pvcName string) (*v1.PersistentVolumeClaim, error) {
+	return c.k8s.CoreV1().PersistentVolumeClaims(namespace).Get(c.context, pvcName, metav1.GetOptions{})
 }
 
 func (c *Client) PodExecCmd(pod *v1.Pod, command string) (string, error) {
@@ -221,48 +255,31 @@ func (c *Client) PodExecCmd(pod *v1.Pod, command string) (string, error) {
 	return stdout.String(), nil
 }
 
-func (c *Client) GetJob(jobName string, namespace string) (*batchv1.Job, error) {
-	return c.k8s.BatchV1().Jobs(namespace).Get(c.context, jobName, metav1.GetOptions{})
-}
+func (c *Client) RestartDeployment(namespace string, deployName string) error {
+	deploy := c.k8s.AppsV1().Deployments(namespace)
 
-func (c *Client) GetCronJob(cronJobName string, namespace string) (*batchv1beta1.CronJob, error) {
-	return c.k8s.BatchV1beta1().CronJobs(namespace).Get(c.context, cronJobName, metav1.GetOptions{})
-}
-
-func (c *Client) GetCronJobByJob(job *batchv1.Job) (*batchv1beta1.CronJob, error) {
-	for _, v := range job.OwnerReferences {
-		if v.Kind == "CronJob" {
-			cronJob, err := c.GetCronJob(v.Name, job.Namespace)
-
-			if err != nil {
-				return nil, err
+	json := fmt.Sprintf(`
+	{
+		"spec":
+		{
+			"template":
+			{
+				"metadata":
+				{
+					"annotations":
+					{
+						"mon.benlai.cloud/restartedAt": "%s"
+					}
+				}
 			}
-
-			return cronJob, nil
 		}
+	}`, time.Now().String())
+
+	if _, err := deploy.Patch(c.context, deployName, types.StrategicMergePatchType, []byte(json), metav1.PatchOptions{}); err != nil {
+		return err
 	}
 
-	return nil, fmt.Errorf("cronjob not found: %s/%s", job.Namespace, job.Name)
-}
-
-func (c *Client) GetDaemonSet(dsName string, namespace string) (*appsv1.DaemonSet, error) {
-	return c.k8s.AppsV1().DaemonSets(namespace).Get(c.context, dsName, metav1.GetOptions{})
-}
-
-func (c *Client) GetStatefulSet(stsName string, namespace string) (*appsv1.StatefulSet, error) {
-	return c.k8s.AppsV1().StatefulSets(namespace).Get(c.context, stsName, metav1.GetOptions{})
-}
-
-func (c *Client) GetDeployment(deployName string, namespace string) (*appsv1.Deployment, error) {
-	return c.k8s.AppsV1().Deployments(namespace).Get(c.context, deployName, metav1.GetOptions{})
-}
-
-func (c *Client) GetHPA(hpaName string, namespace string) (*autoscalingv1.HorizontalPodAutoscaler, error) {
-	return c.k8s.AutoscalingV1().HorizontalPodAutoscalers(namespace).Get(c.context, hpaName, metav1.GetOptions{})
-}
-
-func (c *Client) GetPvc(pvcName string, namespace string) (*v1.PersistentVolumeClaim, error) {
-	return c.k8s.CoreV1().PersistentVolumeClaims(namespace).Get(c.context, pvcName, metav1.GetOptions{})
+	return nil
 }
 
 func (c *Client) WithContext(ctx context.Context) *Client {

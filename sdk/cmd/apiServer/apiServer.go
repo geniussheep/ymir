@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/geniussheep/ymir/sdk/common"
 	"github.com/geniussheep/ymir/sdk/component/zookeeper"
+	"github.com/geniussheep/ymir/sdk/k8s"
 	"github.com/geniussheep/ymir/sdk/middleware"
 	"github.com/geniussheep/ymir/sdk/storage/db"
 	"github.com/geniussheep/ymir/sdk/storage/redis"
@@ -97,7 +98,7 @@ func run(p *cli.Program) error {
 func setup(p *cli.Program) {
 	config.ExtendConfig = p.ExtendConfig
 
-	config.Setup(p.ConfigFilePath, db.Setup, redis.Setup, zookeeper.Setup)
+	config.Setup(p.ConfigFilePath, db.Setup, redis.Setup, zookeeper.Setup, k8s.Setup)
 
 	for _, sf := range p.InitFuncArray {
 		sf()

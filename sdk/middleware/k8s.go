@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func WithContextK8s(c *gin.Context) {
+func WithContextK8S(c *gin.Context) {
 	for k8sName := range config.K8SConfig {
 		c.Set(k8sName, sdk.Runtime.GetK8S(k8sName))
 	}
