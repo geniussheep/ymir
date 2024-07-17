@@ -43,6 +43,7 @@ func New() *Application {
 		middleware: make(map[string]interface{}),
 		handler:    make(map[string][]func(r *gin.RouterGroup, hand ...*gin.HandlerFunc)),
 		other:      make(map[string]interface{}),
+		k8s:        make(map[string]*k8s.Client),
 	}
 }
 
