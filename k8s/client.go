@@ -197,14 +197,24 @@ func (c *Client) GetDeployment(namespace string, deployName string) (*appsv1.Dep
 
 func (c *Client) GetDeploymentByPod(pod *v1.Pod) (*appsv1.Deployment, error) {
 	for _, v := range pod.OwnerReferences {
-		if v.Kind == "Deployment" {
-			deploy, err := c.GetDeployment(v.Name, pod.Namespace)
+		if v.Kind == "ReplicaSet" {
+			rs, err := c.k8s.AppsV1().ReplicaSets(pod.Namespace).Get(c.context, v.Name, metav1.GetOptions{})
 
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("get deployment by pod: %s/%s error:%s", pod.Namespace, pod.Name, err)
 			}
 
-			return deploy, nil
+			for _, d := range rs.OwnerReferences {
+				if d.Kind == "Deployment" {
+					deploy, err := c.GetDeployment(pod.Namespace, d.Name)
+
+					if err != nil {
+						return nil, fmt.Errorf("get deployment by pod: %s/%s error:%s", pod.Namespace, pod.Name, err)
+					}
+
+					return deploy, nil
+				}
+			}
 		}
 	}
 	return nil, fmt.Errorf("deployment not found by pod: %s/%s", pod.Namespace, pod.Name)

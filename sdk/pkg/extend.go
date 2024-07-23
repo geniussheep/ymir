@@ -31,3 +31,30 @@ func MaptoJson[T interface{}](t T) map[string]string {
 	json.Unmarshal(js, &s)
 	return s
 }
+
+func KeyInMap[K comparable, V any](key K, m map[K]V) bool {
+	for k := range m {
+		if k == key {
+			return true
+		}
+	}
+	return false
+}
+
+func ValueInMap[K comparable, V comparable](value V, m map[K]V) bool {
+	for _, v := range m {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
+
+func ItemInSlice[T comparable](item T, s []T) bool {
+	for _, v := range s {
+		if v == item {
+			return true
+		}
+	}
+	return false
+}
