@@ -8,7 +8,6 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	autoscalingv1 "k8s.io/api/autoscaling/v1"
 	batchv1 "k8s.io/api/batch/v1"
-	batchv1beta1 "k8s.io/api/batch/v1beta1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -41,7 +40,7 @@ type K8S interface {
 	GetHPA(namespace string, hpaName string) (*autoscalingv1.HorizontalPodAutoscaler, error)
 	GetStatefulSet(namespace string, stsName string) (*appsv1.StatefulSet, error)
 	GetDaemonSet(namespace string, dsName string) (*appsv1.DaemonSet, error)
-	GetCronJob(namespace string, cronJobName string) (*batchv1beta1.CronJob, error)
+	GetCronJob(namespace string, cronJobName string) (*batchv1.CronJob, error)
 	GetJob(namespace string, jobName string) (*batchv1.Job, error)
 	GetPvc(namespace string, pvcName string) (*v1.PersistentVolumeClaim, error)
 	PodExecCmd(pod *v1.Pod, command string) (string, error)
@@ -159,11 +158,11 @@ func (c *Client) GetJob(namespace string, jobName string) (*batchv1.Job, error) 
 	return c.k8s.BatchV1().Jobs(namespace).Get(c.context, jobName, metav1.GetOptions{})
 }
 
-func (c *Client) GetCronJob(namespace string, cronJobName string) (*batchv1beta1.CronJob, error) {
-	return c.k8s.BatchV1beta1().CronJobs(namespace).Get(c.context, cronJobName, metav1.GetOptions{})
+func (c *Client) GetCronJob(namespace string, cronJobName string) (*batchv1.CronJob, error) {
+	return c.k8s.BatchV1().CronJobs(namespace).Get(c.context, cronJobName, metav1.GetOptions{})
 }
 
-func (c *Client) GetCronJobByJob(job *batchv1.Job) (*batchv1beta1.CronJob, error) {
+func (c *Client) GetCronJobByJob(job *batchv1.Job) (*batchv1.CronJob, error) {
 	for _, v := range job.OwnerReferences {
 		if v.Kind == "CronJob" {
 			cronJob, err := c.GetCronJob(v.Name, job.Namespace)
