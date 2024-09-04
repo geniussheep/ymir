@@ -11,21 +11,6 @@ func SetFullUrl(domain, apiPath string) string {
 }
 
 func ExecutePagePost[T any](domain, apiPath string, body any) (*model.PaginationResult[T], error) {
-	resp := model.ResponseResult[[]T]{}
-	apiUrl := SetFullUrl(domain, apiPath)
-	err := pkg.PostJson(apiUrl, nil, nil, body, &resp)
-	if err != nil {
-		return nil, fmt.Errorf("call [post]api:%s reqData:%+v error, err:%s", apiUrl, body, err)
-	}
-
-	if resp.Code != 0 {
-		return nil, fmt.Errorf("call [post]api:%s reqData:%+v failed, response errr msg:%s", apiUrl, body, resp.Msg)
-	}
-	result := model.PaginationResult[T]{Total: len(resp.Data), Result: resp.Data}
-	return &result, nil
-}
-
-func ExecuteDefaultPagePost[T any](domain, apiPath string, body any) (*model.PaginationResult[T], error) {
 	resp := model.ResponsePaginationResult[T]{}
 	apiUrl := SetFullUrl(domain, apiPath)
 	err := pkg.PostJson(apiUrl, nil, nil, body, &resp)
