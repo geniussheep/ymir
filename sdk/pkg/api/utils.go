@@ -29,11 +29,11 @@ func ExecuteGet[T any](domain, apiPath string, query map[string]string) (*model.
 	apiUrl := SetFullUrl(domain, apiPath)
 	err := pkg.GetJson(apiUrl, nil, query, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("call [post]api:%s reqData:%+v error, err:%s", apiUrl, query, err)
+		return nil, fmt.Errorf("call [get]api:%s reqData:%+v error, err:%s", apiUrl, query, err)
 	}
 
 	if resp.Code != 0 {
-		return nil, fmt.Errorf("call [post]api:%s reqData:%+v failed, response errr msg:%s", apiUrl, query, resp.Msg)
+		return nil, fmt.Errorf("call [get]api:%s reqData:%+v failed, response errr msg:%s", apiUrl, query, resp.Msg)
 	}
 	return &resp, nil
 }

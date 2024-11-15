@@ -3,6 +3,7 @@ package pkg
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/geniussheep/ymir/logger"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -67,13 +68,15 @@ func httpRequestJson(httpMethod string, callUrl string, headers map[string]strin
 		}
 		b = json
 	}
-
+	logger.Infof("call [%s]url:%s with header:%+v query:%+v body:%s", httpMethod, callUrl, headers, query, string(b))
 	ret, err := HttpRequest(httpMethod, callUrl, headers, query, b)
+	logger.Infof("call [%s]url:%s has response:%s", httpMethod, callUrl, string(ret))
 	if err != nil {
+		logger.Errorf("call [%s]url:%s has error:%s", httpMethod, callUrl, err.Error())
 		return err
 	}
 	if err = json.Unmarshal(ret, response); err != nil {
-		return err
+		logger.Errorf("call [%s]url:%s unmarshal response:%s error:%s", httpMethod, callUrl, string(ret), err.Error())
 	}
 	return nil
 }
@@ -94,9 +97,11 @@ func httpRequestString(httpMethod string, callUrl string, headers map[string]str
 	}
 
 	response := ""
-
+	logger.Infof("call [%s]url:%s with header:%+v query:%+v body:%s", httpMethod, callUrl, headers, query, string(b))
 	ret, err := HttpRequest(httpMethod, callUrl, headers, query, b)
+	logger.Infof("call [%s]url:%s has response:%s", httpMethod, callUrl, string(ret))
 	if err != nil {
+		logger.Errorf("call [%s]url:%s has error:%s", httpMethod, callUrl, err.Error())
 		return "error", err
 	}
 	response = string(ret)
