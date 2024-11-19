@@ -1,6 +1,9 @@
 package pkg
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 func If[T any](condition bool, trueVal, falseVal T) T {
 	if condition {
@@ -57,4 +60,28 @@ func ItemInSlice[T comparable](item T, s []T) bool {
 		}
 	}
 	return false
+}
+
+// Paginate 分页函数
+func Paginate[T any](list []T, page, pageSize int) ([]T, error) {
+	if page < 1 || pageSize < 1 {
+		return nil, fmt.Errorf("page and pageSize must be greater than 0")
+	}
+
+	// 计算起始索引和结束索引
+	start := (page - 1) * pageSize
+	end := start + pageSize
+
+	// 如果起始索引超出范围，返回空切片
+	if start >= len(list) {
+		return []T{}, nil
+	}
+
+	// 确保结束索引不超出范围
+	if end > len(list) {
+		end = len(list)
+	}
+
+	// 返回分页后的切片
+	return list[start:end], nil
 }
