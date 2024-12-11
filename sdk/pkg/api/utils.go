@@ -52,7 +52,7 @@ func ExecutePost[T any](domain, apiPath string, body any) (*model.ResponseResult
 	return &resp, nil
 }
 
-func ExecuteGetString[T any](domain, apiPath string, query map[string]string) (string, error) {
+func ExecuteGetString[T any](domain, apiPath string, query map[string]interface{}) (string, error) {
 	apiUrl := SetFullUrl(domain, apiPath)
 	resp, err := pkg.GetString(apiUrl, nil, query)
 	if err != nil {

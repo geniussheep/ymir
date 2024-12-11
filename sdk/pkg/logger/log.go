@@ -44,7 +44,7 @@ func SetupLogger(opts ...Option) logger.Logger {
 
 	switch op.driver {
 	case "zap":
-		log.DefaultLogger, err = zap.NewLogger(logger.WithLevel(level), logger.WithOutput(output), zap.WithCallerSkip(1))
+		log.DefaultLogger, err = zap.NewLogger(logger.WithLevel(level), logger.WithOutput(output), zap.WithCallerSkip(1), zap.WithConfig(op.zapCfg))
 		if err != nil {
 			log.Fatalf("new zap logger error, %s", err.Error())
 		}

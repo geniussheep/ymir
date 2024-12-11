@@ -1,5 +1,7 @@
 package logger
 
+import "go.uber.org/zap"
+
 type Option func(*options)
 
 type options struct {
@@ -8,6 +10,7 @@ type options struct {
 	level  string
 	stdout string
 	cap    uint
+	zapCfg zap.Config
 }
 
 func setDefault() options {
@@ -46,5 +49,11 @@ func WithStdout(s string) Option {
 func WithCap(n uint) Option {
 	return func(o *options) {
 		o.cap = n
+	}
+}
+
+func WithZapCfg(cfg zap.Config) Option {
+	return func(o *options) {
+		o.zapCfg = cfg
 	}
 }

@@ -1,13 +1,17 @@
 package config
 
-import "github.com/geniussheep/ymir/sdk/pkg/logger"
+import (
+	"github.com/geniussheep/ymir/sdk/pkg/logger"
+	"go.uber.org/zap"
+)
 
 type Logger struct {
-	Type   string `yaml:"type" mapstructure:"type"`
-	Path   string `yaml:"path" mapstructure:"path"`
-	Level  string `yaml:"level" mapstructure:"level"`
-	Stdout string `yaml:"stdout" mapstructure:"stdout"`
-	Cap    uint   `yaml:"cap" mapstructure:"cap"`
+	Type   string     `yaml:"type" mapstructure:"type"`
+	Path   string     `yaml:"path" mapstructure:"path"`
+	Level  string     `yaml:"level" mapstructure:"level"`
+	Stdout string     `yaml:"stdout" mapstructure:"stdout"`
+	Cap    uint       `yaml:"cap" mapstructure:"cap"`
+	ZapCfg zap.Config `yaml:"zapCfg" mapstructure:"zapCfg"`
 }
 
 func getPath(path string) string {
@@ -38,6 +42,10 @@ func getStdout(stdout string) string {
 	return stdout
 }
 
+func getZapCfg(cfg zap.Config) zap.Config {
+	return cfg
+}
+
 // Setup 设置logger
 func (e Logger) Setup() {
 	logger.SetupLogger(
@@ -46,6 +54,7 @@ func (e Logger) Setup() {
 		logger.WithLevel(getLevel(e.Level)),
 		logger.WithStdout(getStdout(e.Stdout)),
 		logger.WithCap(e.Cap),
+		logger.WithZapCfg(getZapCfg(e.ZapCfg)),
 	)
 }
 
