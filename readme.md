@@ -42,3 +42,11 @@
 - 调整pkg.CheckArrayArgs方法支持泛型
 ### v1.0.7.1
 - 修复pkg.http下httpRequestJson 反序列化json报错后返回的错误信息不正确问题
+### v1.1.5
+- 新增 k8s 的更加标签获取各种资源的方法
+  - GetPodList
+  - GetDeploymentList
+  - GetCronJobList
+  - GetJobList
+  - GetStatefulSetList
+  - GetDaemonSetList
