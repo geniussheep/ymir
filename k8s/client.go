@@ -35,17 +35,24 @@ type K8S interface {
 	GetNode(nodeName string) (*v1.Node, error)
 	GetNodeByIP(nodeIP string) (*v1.Node, error)
 	GetPod(namespace string, podName string) (*v1.Pod, error)
+	GetPodList(namespace string, labels map[string]string) (*v1.PodList, error)
 	GetDeployment(namespace string, deployName string) (*appsv1.Deployment, error)
 	GetDeploymentByPod(pod *v1.Pod) (*appsv1.Deployment, error)
+	GetDeploymentList(namespace string, labels map[string]string) (*appsv1.DeploymentList, error)
 	GetHPA(namespace string, hpaName string) (*autoscalingv1.HorizontalPodAutoscaler, error)
 	GetStatefulSet(namespace string, stsName string) (*appsv1.StatefulSet, error)
+	GetStatefulSetList(namespace string, labels map[string]string) (*appsv1.StatefulSetList, error)
 	GetDaemonSet(namespace string, dsName string) (*appsv1.DaemonSet, error)
+	GetDaemonSetList(namespace string, labels map[string]string) (*appsv1.DaemonSetList, error)
 	GetCronJob(namespace string, cronJobName string) (*batchv1.CronJob, error)
+	GetCronJobList(namespace string, labels map[string]string) (*batchv1.CronJobList, error)
 	GetJob(namespace string, jobName string) (*batchv1.Job, error)
+	GetJobList(namespace string, labels map[string]string) (*batchv1.JobList, error)
 	GetPvc(namespace string, pvcName string) (*v1.PersistentVolumeClaim, error)
 	PodExecCmd(pod *v1.Pod, command string) (string, error)
 	RestartDeployment(namespace string, deployName string) error
 	WithContext(ctx context.Context) *Client
+	K8S() *kubernetes.Clientset
 }
 
 type Client struct {
@@ -128,6 +135,18 @@ type PodStatus struct {
 	RestartCount int32
 }
 
+// labelsToString 将标签的 map 转化为 Kubernetes 兼容的标签选择器字符串
+func labelsToString(labels map[string]string) string {
+	labelSelector := ""
+	for key, value := range labels {
+		if labelSelector != "" {
+			labelSelector += ","
+		}
+		labelSelector += key + "=" + value
+	}
+	return labelSelector
+}
+
 func (s *PodStatus) IsRunning() bool {
 	return s.Phase == string(v1.PodRunning)
 }
@@ -158,8 +177,16 @@ func (c *Client) GetJob(namespace string, jobName string) (*batchv1.Job, error) 
 	return c.k8s.BatchV1().Jobs(namespace).Get(c.context, jobName, metav1.GetOptions{})
 }
 
+func (c *Client) GetJobList(namespace string, labels map[string]string) (*batchv1.JobList, error) {
+	return c.k8s.BatchV1().Jobs(namespace).List(c.context, metav1.ListOptions{LabelSelector: labelsToString(labels)})
+}
+
 func (c *Client) GetCronJob(namespace string, cronJobName string) (*batchv1.CronJob, error) {
 	return c.k8s.BatchV1().CronJobs(namespace).Get(c.context, cronJobName, metav1.GetOptions{})
+}
+
+func (c *Client) GetCronJobList(namespace string, labels map[string]string) (*batchv1.CronJobList, error) {
+	return c.k8s.BatchV1().CronJobs(namespace).List(c.context, metav1.ListOptions{LabelSelector: labelsToString(labels)})
 }
 
 func (c *Client) GetCronJobByJob(job *batchv1.Job) (*batchv1.CronJob, error) {
@@ -182,16 +209,32 @@ func (c *Client) GetDaemonSet(namespace string, dsName string) (*appsv1.DaemonSe
 	return c.k8s.AppsV1().DaemonSets(namespace).Get(c.context, dsName, metav1.GetOptions{})
 }
 
+func (c *Client) GetDaemonSetList(namespace string, labels map[string]string) (*appsv1.DaemonSetList, error) {
+	return c.k8s.AppsV1().DaemonSets(namespace).List(c.context, metav1.ListOptions{LabelSelector: labelsToString(labels)})
+}
+
 func (c *Client) GetStatefulSet(namespace string, stsName string) (*appsv1.StatefulSet, error) {
 	return c.k8s.AppsV1().StatefulSets(namespace).Get(c.context, stsName, metav1.GetOptions{})
+}
+
+func (c *Client) GetStatefulSetList(namespace string, labels map[string]string) (*appsv1.StatefulSetList, error) {
+	return c.k8s.AppsV1().StatefulSets(namespace).List(c.context, metav1.ListOptions{LabelSelector: labelsToString(labels)})
 }
 
 func (c *Client) GetPod(namespace string, podName string) (*v1.Pod, error) {
 	return c.k8s.CoreV1().Pods(namespace).Get(c.context, podName, metav1.GetOptions{})
 }
 
+func (c *Client) GetPodList(namespace string, labels map[string]string) (*v1.PodList, error) {
+	return c.k8s.CoreV1().Pods(namespace).List(c.context, metav1.ListOptions{LabelSelector: labelsToString(labels)})
+}
+
 func (c *Client) GetDeployment(namespace string, deployName string) (*appsv1.Deployment, error) {
 	return c.k8s.AppsV1().Deployments(namespace).Get(c.context, deployName, metav1.GetOptions{})
+}
+
+func (c *Client) GetDeploymentList(namespace string, labels map[string]string) (*appsv1.DeploymentList, error) {
+	return c.k8s.AppsV1().Deployments(namespace).List(c.context, metav1.ListOptions{LabelSelector: labelsToString(labels)})
 }
 
 func (c *Client) GetDeploymentByPod(pod *v1.Pod) (*appsv1.Deployment, error) {
@@ -294,4 +337,8 @@ func (c *Client) RestartDeployment(namespace string, deployName string) error {
 func (c *Client) WithContext(ctx context.Context) *Client {
 	c.context = ctx
 	return c
+}
+
+func (c *Client) K8S() *kubernetes.Clientset {
+	return c.k8s
 }
