@@ -3,6 +3,7 @@ package pkg
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 func If[T any](condition bool, trueVal, falseVal T) T {
@@ -84,4 +85,8 @@ func Paginate[T any](list []T, page, pageSize int) ([]T, error) {
 
 	// 返回分页后的切片
 	return list[start:end], nil
+}
+
+func ContainsIgnoreCase(s, substr string) bool {
+	return strings.Contains(strings.ToLower(s), strings.ToLower(substr))
 }
