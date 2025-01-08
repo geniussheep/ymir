@@ -35,18 +35,23 @@ type K8S interface {
 	GetNode(nodeName string) (*v1.Node, error)
 	GetNodeByIP(nodeIP string) (*v1.Node, error)
 	GetPod(namespace string, podName string) (*v1.Pod, error)
+	DeletePod(namespace string, podName string) error
 	GetPodList(namespace string, labels map[string]string) (*v1.PodList, error)
 	GetDeployment(namespace string, deployName string) (*appsv1.Deployment, error)
+	DeleteDeployment(namespace string, deployName string) error
 	GetDeploymentByPod(pod *v1.Pod) (*appsv1.Deployment, error)
 	GetDeploymentList(namespace string, labels map[string]string) (*appsv1.DeploymentList, error)
 	GetHPA(namespace string, hpaName string) (*autoscalingv1.HorizontalPodAutoscaler, error)
 	GetStatefulSet(namespace string, stsName string) (*appsv1.StatefulSet, error)
+	DeleteStatefulSet(namespace string, stsName string) error
 	GetStatefulSetList(namespace string, labels map[string]string) (*appsv1.StatefulSetList, error)
 	GetDaemonSet(namespace string, dsName string) (*appsv1.DaemonSet, error)
 	GetDaemonSetList(namespace string, labels map[string]string) (*appsv1.DaemonSetList, error)
 	GetCronJob(namespace string, cronJobName string) (*batchv1.CronJob, error)
+	DeleteCronJob(namespace string, cronJobName string) error
 	GetCronJobList(namespace string, labels map[string]string) (*batchv1.CronJobList, error)
 	GetJob(namespace string, jobName string) (*batchv1.Job, error)
+	DeleteJob(namespace string, jobName string) error
 	GetJobList(namespace string, labels map[string]string) (*batchv1.JobList, error)
 	GetPvc(namespace string, pvcName string) (*v1.PersistentVolumeClaim, error)
 	PodExecCmd(pod *v1.Pod, command string) (string, error)
@@ -177,12 +182,20 @@ func (c *Client) GetJob(namespace string, jobName string) (*batchv1.Job, error) 
 	return c.k8s.BatchV1().Jobs(namespace).Get(c.context, jobName, metav1.GetOptions{})
 }
 
+func (c *Client) DeleteJob(namespace string, jobName string) error {
+	return c.k8s.BatchV1().Jobs(namespace).Delete(c.context, jobName, metav1.DeleteOptions{})
+}
+
 func (c *Client) GetJobList(namespace string, labels map[string]string) (*batchv1.JobList, error) {
 	return c.k8s.BatchV1().Jobs(namespace).List(c.context, metav1.ListOptions{LabelSelector: labelsToString(labels)})
 }
 
 func (c *Client) GetCronJob(namespace string, cronJobName string) (*batchv1.CronJob, error) {
 	return c.k8s.BatchV1().CronJobs(namespace).Get(c.context, cronJobName, metav1.GetOptions{})
+}
+
+func (c *Client) DeleteCronJob(namespace string, cronJobName string) error {
+	return c.k8s.BatchV1().CronJobs(namespace).Delete(c.context, cronJobName, metav1.DeleteOptions{})
 }
 
 func (c *Client) GetCronJobList(namespace string, labels map[string]string) (*batchv1.CronJobList, error) {
@@ -217,6 +230,10 @@ func (c *Client) GetStatefulSet(namespace string, stsName string) (*appsv1.State
 	return c.k8s.AppsV1().StatefulSets(namespace).Get(c.context, stsName, metav1.GetOptions{})
 }
 
+func (c *Client) DeleteStatefulSet(namespace string, stsName string) error {
+	return c.k8s.AppsV1().StatefulSets(namespace).Delete(c.context, stsName, metav1.DeleteOptions{})
+}
+
 func (c *Client) GetStatefulSetList(namespace string, labels map[string]string) (*appsv1.StatefulSetList, error) {
 	return c.k8s.AppsV1().StatefulSets(namespace).List(c.context, metav1.ListOptions{LabelSelector: labelsToString(labels)})
 }
@@ -225,12 +242,20 @@ func (c *Client) GetPod(namespace string, podName string) (*v1.Pod, error) {
 	return c.k8s.CoreV1().Pods(namespace).Get(c.context, podName, metav1.GetOptions{})
 }
 
+func (c *Client) DeletePod(namespace string, podName string) error {
+	return c.k8s.CoreV1().Pods(namespace).Delete(c.context, podName, metav1.DeleteOptions{})
+}
+
 func (c *Client) GetPodList(namespace string, labels map[string]string) (*v1.PodList, error) {
 	return c.k8s.CoreV1().Pods(namespace).List(c.context, metav1.ListOptions{LabelSelector: labelsToString(labels)})
 }
 
 func (c *Client) GetDeployment(namespace string, deployName string) (*appsv1.Deployment, error) {
 	return c.k8s.AppsV1().Deployments(namespace).Get(c.context, deployName, metav1.GetOptions{})
+}
+
+func (c *Client) DeleteDeployment(namespace string, deployName string) error {
+	return c.k8s.AppsV1().Deployments(namespace).Delete(c.context, deployName, metav1.DeleteOptions{})
 }
 
 func (c *Client) GetDeploymentList(namespace string, labels map[string]string) (*appsv1.DeploymentList, error) {
